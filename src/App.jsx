@@ -80,11 +80,47 @@ const SUB_CATEGORIES = {
 };
 
 const PRIORITIES = {
+  // Core
   smartphone: ['Performance', 'Camera', 'Battery', 'Clean UI', 'Display', 'Design', 'Value', 'Brand'],
   tablet: ['Display', 'Performance', 'Battery', 'Stylus', 'Portability', 'Cellular'],
   smartwatch: ['Health', 'Battery', 'Style', 'Smart Features', 'Ruggedness'],
   headphones: ['Sound', 'ANC', 'Comfort', 'Battery', 'Mic'],
+
+  // Computers
+  computer: ['Performance', 'Screen', 'Battery', 'Portability'], // Fallback
   laptop: ['Performance', 'Portability', 'Battery', 'Screen', 'Build'],
+  aio: ['Display', 'Performance', 'Design', 'Space Saving'],
+  desktop: ['Performance', 'Upgradability', 'Cooling', 'Aesthetics'],
+  gpu: ['Gaming Performance', 'VRAM', 'Cooling', 'Power Efficiency'],
+
+  // Appliances
+  appliance: ['Energy Efficiency', 'Capacity', 'Durability', 'Features'], // Fallback
+  tv: ['Picture Quality', 'Sound', 'Size', 'Gaming Features', 'Smart OS'],
+  fridge: ['Cooling', 'Capacity', 'Energy Efficiency', 'Design'],
+  washing_machine: ['Wash Quality', 'Efficiency', 'Noise', 'Programs'],
+  ac: ['Cooling Speed', 'Efficiency', 'Noise', 'Smart Features'],
+  microwave: ['Cooking Modes', 'Capacity', 'Ease of Use'],
+  air_fryer: ['Cooking Speed', 'Capacity', 'Cleaning Ease'],
+  iron: ['Steam Output', 'Weight', 'Glide'],
+  dryer: ['Drying Speed', 'Efficiency', 'Capacity'],
+  washer_dryer: ['Convenience', 'Efficiency', 'Capacity'],
+
+  // Smart Home
+  smart_home: ['Compatibility', 'Ease of Use', 'Features'], // Fallback
+  robot_vac: ['Suction', 'Navigation', 'Mopping', 'Self-Emptying'],
+  smart_lock: ['Security', 'Connectivity', 'Battery', 'Design'],
+  smart_curtain: ['Motor', 'Noise', 'Battery', 'Integration'],
+  smart_speaker: ['Sound', 'Voice Assistant', 'Design'],
+  smart_light: ['Brightness', 'Colors', 'Connectivity'],
+
+  // Personal Care
+  personal_care: ['Build Quality', 'Features', 'Safety'], // Fallback
+  hair_dryer: ['Drying Speed', 'Heat Control', 'Weight'],
+  trimmer: ['Battery', 'Blade Quality', 'Waterproof'],
+  straightener: ['Heating Speed', 'Plate Material', 'Heat Control'],
+  epilator: ['Pain Management', 'Efficiency', 'Battery'],
+
+  // Auto
   automobile: ['Mileage', 'Safety', 'Comfort', 'Power', 'Maintenance', 'Tech', 'Resale', 'Brand']
 };
 
@@ -107,74 +143,24 @@ const BudgetSlider = ({ min, max, currency, onChange, limit }) => {
   return (
     <div className="w-full px-2 py-4">
       <div className="relative w-full h-12">
-        {/* Track Background */}
         <div className="absolute top-1/2 left-0 w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full -translate-y-1/2"></div>
-
-        {/* Active Track Range */}
-        <div
-          className="absolute top-1/2 h-2 bg-blue-600 rounded-full -translate-y-1/2 pointer-events-none z-10"
-          style={{ left: `${minPercent}%`, width: `${maxPercent - minPercent}%` }}
-        ></div>
-
-        {/* Min Slider 
-          FIX: Added pointer-events-none to input but pointer-events-auto to thumb
-        */}
-        <input
-          type="range"
-          min={0}
-          max={limit}
-          value={min}
-          onChange={(e) => {
-            const value = Math.min(Number(e.target.value), max - (limit * 0.05));
-            onChange(value, max);
-          }}
-          className="absolute top-1/2 left-0 w-full -translate-y-1/2 appearance-none bg-transparent pointer-events-none z-20 cursor-pointer 
-            [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-600 [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:appearance-none hover:[&::-webkit-slider-thumb]:scale-110 transition-all
-            [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-blue-600 [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:appearance-none hover:[&::-moz-range-thumb]:scale-110
-          "
-        />
-
-        {/* Max Slider 
-          FIX: Added pointer-events-none to input but pointer-events-auto to thumb
-        */}
-        <input
-          type="range"
-          min={0}
-          max={limit}
-          value={max}
-          onChange={(e) => {
-            const value = Math.max(Number(e.target.value), min + (limit * 0.05));
-            onChange(min, value);
-          }}
-          className="absolute top-1/2 left-0 w-full -translate-y-1/2 appearance-none bg-transparent pointer-events-none z-20 cursor-pointer 
-            [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-600 [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:appearance-none hover:[&::-webkit-slider-thumb]:scale-110 transition-all
-            [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-blue-600 [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:appearance-none hover:[&::-moz-range-thumb]:scale-110
-          "
-        />
+        <div className="absolute top-1/2 h-2 bg-blue-600 rounded-full -translate-y-1/2 pointer-events-none z-10" style={{ left: `${minPercent}%`, width: `${maxPercent - minPercent}%` }}></div>
+        <input type="range" min={0} max={limit} value={min} onChange={(e) => { const value = Math.min(Number(e.target.value), max - (limit * 0.05)); onChange(value, max); }} className="absolute top-1/2 left-0 w-full -translate-y-1/2 appearance-none bg-transparent pointer-events-auto z-20 cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-600 [&::-webkit-slider-thumb]:shadow-md hover:[&::-webkit-slider-thumb]:scale-110 transition-all" />
+        <input type="range" min={0} max={limit} value={max} onChange={(e) => { const value = Math.max(Number(e.target.value), min + (limit * 0.05)); onChange(min, value); }} className="absolute top-1/2 left-0 w-full -translate-y-1/2 appearance-none bg-transparent pointer-events-auto z-20 cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-600 [&::-webkit-slider-thumb]:shadow-md hover:[&::-webkit-slider-thumb]:scale-110 transition-all" />
       </div>
       <div className="flex justify-between items-center gap-4 mt-2">
         <div className="flex-1">
           <label className="text-xs text-gray-500 dark:text-gray-400 font-bold ml-1">Min Price</label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">{currency}</span>
-            <input
-              type="number"
-              value={min}
-              onChange={(e) => onChange(Number(e.target.value), max)}
-              className="w-full pl-8 pr-3 py-2 border border-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+            <input type="number" value={min} onChange={(e) => onChange(Number(e.target.value), max)} className="w-full pl-8 pr-3 py-2 border border-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none" />
           </div>
         </div>
         <div className="flex-1">
           <label className="text-xs text-gray-500 dark:text-gray-400 font-bold ml-1">Max Price</label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">{currency}</span>
-            <input
-              type="number"
-              value={max}
-              onChange={(e) => onChange(min, Number(e.target.value))}
-              className="w-full pl-8 pr-3 py-2 border border-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+            <input type="number" value={max} onChange={(e) => onChange(min, Number(e.target.value))} className="w-full pl-8 pr-3 py-2 border border-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none" />
           </div>
         </div>
       </div>
@@ -368,7 +354,6 @@ async function fetchChatResponse(query, contextProducts, countryData, userKey) {
   const activeKey = userKey || apiKey;
   if (!activeKey) return "API Key Missing.";
   const context = contextProducts.map(p => {
-    // Fix: Encode name but replace parens to avoid markdown regex breaking
     const safeName = encodeURIComponent(p.name).replace(/\(/g, '%28').replace(/\)/g, '%29');
     const affiliateSuffix = countryData.affiliateTag ? `&tag=${countryData.affiliateTag}` : '';
     const buyLink = `https://www.${countryData.market}/s?k=${safeName}${affiliateSuffix}`;
@@ -808,7 +793,7 @@ export default function App() {
                       className="w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl appearance-none cursor-pointer focus:ring-2 focus:ring-purple-500 focus:bg-white dark:focus:bg-gray-800 transition-all font-medium text-gray-700 dark:text-gray-200 hover:border-purple-300"
                     >
                       <option value="">Select Priority {n}...</option>
-                      {priorityOptions.filter(p => [1, 2, 3].every(x => x === parseInt(n) || formData[`priority${x}`] !== p)).map(p => <option key={p} value={p}>{p}</option>)}
+                      {(priorityOptions || []).filter(p => [1, 2, 3].every(x => x === parseInt(n) || formData[`priority${x}`] !== p)).map(p => <option key={p} value={p}>{p}</option>)}
                     </select>
                     <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none rotate-90" size={16} />
                   </div>

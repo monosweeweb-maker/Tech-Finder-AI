@@ -1,77 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
-  Smartphone,
-  Laptop,
-  Headphones,
-  Watch,
-  Camera,
-  Refrigerator,
-  Tv,
-  Wind,
-  Thermometer,
-  Waves,
-  ChevronRight,
-  Check,
-  ArrowLeft,
-  Search,
-  Cpu,
-  Battery,
-  Aperture,
-  Sparkles,
-  DollarSign,
-  Globe,
-  Loader2,
-  ShoppingCart,
-  AlertCircle,
-  ThumbsUp,
-  ThumbsDown,
-  RefreshCcw,
-  Zap,
-  Box,
-  Car,
-  Bike,
-  Scissors,
-  Monitor,
-  Tablet,
-  Home,
-  User,
-  MessageSquare,
-  Armchair,
-  Lock,
-  Shirt,
-  UtensilsCrossed,
-  Droplets,
-  Send,
-  Bot,
-  X,
-  Info,
-  Shield,
-  Moon,
-  Sun,
-  ArrowRight,
-  BrainCircuit,
-  BarChart3,
-  Layers,
-  Banknote,
-  Euro,
-  PoundSterling,
-  JapaneseYen,
-  IndianRupee,
-  Settings,
-  Key
+  Smartphone, Laptop, Headphones, Watch, Camera, Refrigerator, Tv,
+  Wind, Thermometer, Waves, ChevronRight, Check, ArrowLeft, Search,
+  Cpu, Battery, Aperture, Sparkles, DollarSign, Globe, Loader2,
+  ShoppingCart, AlertCircle, ThumbsUp, ThumbsDown, RefreshCcw, Zap,
+  Box, Car, Bike, Scissors, Monitor, Tablet, Home, User, MessageSquare,
+  Armchair, Lock, Shirt, UtensilsCrossed, Send, Bot, X, Info, Shield,
+  Moon, Sun, ArrowRight, BrainCircuit, BarChart3, Layers, Banknote,
+  Euro, PoundSterling, JapaneseYen, IndianRupee, Mail, Phone, Linkedin,
+  MapPin, Star, Award, CheckCircle2, TrendingUp
 } from 'lucide-react';
 
-/* --- VERCEL / LOCAL DEPLOYMENT INSTRUCTIONS ---
-  
-  1. API KEY (Method A - Recommended):
-     - Create a .env file locally: VITE_GEMINI_API_KEY=AIzaSy...
-     - In Vercel Settings > Environment Variables: Add VITE_GEMINI_API_KEY
-     
-  2. API KEY (Method B - Fallback):
-     - If Method A fails, use the new "Settings" gear icon in the UI to paste your key manually.
+/* --- API KEY SETUP ---
+   For local/Vercel, set VITE_GEMINI_API_KEY in your environment variables.
 */
 
 // --- Constants & Config ---
+
+const CONTACT_INFO = {
+  whatsapp: "+91-95312-73486",
+  linkedin: "https://www.linkedin.com/in/monoswee-nath/",
+  email: "m.nath190702@gmail.com"
+};
 
 const COUNTRIES = [
   { code: 'US', name: 'United States', currency: '$', icon: DollarSign, market: 'amazon.com', affiliateTag: 'YOUR_US_TAG', maxLimit: 5000 },
@@ -130,192 +80,24 @@ const SUB_CATEGORIES = {
 };
 
 const PRIORITIES = {
-  smartphone: ['Performance (Gaming/Speed)', 'Camera Quality', 'Battery Life', 'Clean Software (UI)', 'Display Quality', 'Build Quality/Design', 'Value for Money', 'Brand Prestige'],
-  tablet: ['Display Quality', 'Performance', 'Battery Life', 'Pencil/Stylus Support', 'Weight/Portability', 'Cellular Connectivity'],
-  smartwatch: ['Health Tracking', 'Battery Life', 'Style', 'Smart Features', 'Ruggedness'],
-  headphones: ['Sound Quality', 'ANC', 'Comfort', 'Battery', 'Mic Quality'],
-  laptop: ['Performance (CPU/GPU)', 'Portability', 'Battery', 'Screen Quality', 'Build Quality'],
-  aio: ['Screen Size/Quality', 'Performance', 'Design/Esthetics', 'Space Saving', 'Included Accessories'],
-  desktop: ['Raw Performance', 'Upgradability', 'Cooling', 'Aesthetics/RGB', 'Value'],
-  gpu: ['Gaming Performance (FPS)', 'VRAM Capacity', 'Ray Tracing', 'Power Efficiency', 'Thermal Performance'],
-  tv: ['Picture Quality (OLED/QLED)', 'Sound', 'Size', 'Gaming (120Hz)', 'Smart OS'],
-  ac: ['Cooling Speed', 'Efficiency (ISEER)', 'Noise', 'Smart Features', 'Durability'],
-  washing_machine: ['Wash Quality', 'Efficiency', 'Noise', 'Dryer Capability', 'Programs'],
-  fridge: ['Cooling Tech', 'Capacity', 'Efficiency', 'Convertible Modes', 'Design'],
-  microwave: ['Cooking Modes', 'Capacity', 'Ease of Use', 'Power Consumption', 'Design'],
-  air_fryer: ['Capacity', 'Cooking Speed', 'Cleaning Ease', 'Presets', 'Noise'],
-  iron: ['Steam Output', 'Weight', 'Glide', 'Cord Length', 'Heating Speed'],
-  dryer: ['Drying Speed', 'Fabric Care', 'Energy Efficiency', 'Capacity', 'Noise'],
-  washer_dryer: ['Convenience', 'Wash+Dry Speed', 'Efficiency', 'Capacity', 'Reliability'],
-  robot_vac: ['Suction Power', 'Mopping Capability', 'Navigation/Mapping', 'Self-Emptying', 'Obstacle Avoidance'],
-  smart_lock: ['Security Features', 'Unlock Methods', 'Connectivity (WiFi/BT)', 'Battery Life', 'Design'],
-  smart_curtain: ['Motor Strength', 'Noise Level', 'Battery/Solar', 'Smart Integration', 'Installation Ease'],
-  smart_speaker: ['Sound Quality', 'Voice Assistant', 'Microphone Sensitivity', 'Design', 'Ecosystem'],
-  smart_light: ['Brightness', 'Color Range', 'Connectivity', 'App Features', 'Lifespan'],
-  hair_dryer: ['Drying Speed', 'Heat Protection', 'Weight', 'Attachments', 'Noise'],
-  trimmer: ['Battery Life', 'Blade Sharpness', 'Length Settings', 'Waterproof', 'Charging Speed'],
-  straightener: ['Heating Speed', 'Plate Material', 'Heat Control', 'Cord Swivel', 'Safety'],
-  automobile: ['Mileage/Range', 'Safety Rating', 'Comfort/Ride Quality', 'Performance/Power', 'Maintenance Cost', 'Features/Tech', 'Resale Value', 'Brand Reliability']
+  smartphone: ['Performance', 'Camera', 'Battery', 'Clean UI', 'Display', 'Design', 'Value', 'Brand'],
+  tablet: ['Display', 'Performance', 'Battery', 'Stylus', 'Portability', 'Cellular'],
+  smartwatch: ['Health', 'Battery', 'Style', 'Smart Features', 'Ruggedness'],
+  headphones: ['Sound', 'ANC', 'Comfort', 'Battery', 'Mic'],
+  laptop: ['Performance', 'Portability', 'Battery', 'Screen', 'Build'],
+  automobile: ['Mileage', 'Safety', 'Comfort', 'Power', 'Maintenance', 'Tech', 'Resale', 'Brand']
 };
 
-// --- API Helper ---
-// Helper to safely get API key from environment (Vite) or local storage
-const getApiKey = () => {
-  let key = "";
-  try {
-    // Check if import.meta.env exists (Vite)
-    // @ts-ignore
-    if (typeof import.meta !== 'undefined' && import.meta.env) {
-      key = import.meta.env.VITE_GEMINI_API_KEY || "";
-    }
-  } catch (e) {
-    console.log("Env read error (expected in some environments)");
-  }
-
-  // If not found in env, check local storage
-  if (!key) {
-    key = localStorage.getItem('gemini_api_key') || "";
-  }
-  return key;
+const PREFERENCE_SUGGESTIONS = {
+  smartphone: "e.g., Must have 5G, Prefer Samsung or Pixel, Need headphone jack...",
+  laptop: "e.g., Backlit keyboard required, Needs to run Blender, USB-C charging...",
+  headphone: "e.g., Multipoint connection, Water resistant for gym, Heavy bass...",
+  automobile: "e.g., Sunroof is a must, Boot space for travel, 360 camera...",
+  appliance: "e.g., Low noise operation, Inverter technology, 5-star energy rating...",
+  default: "Any specific requirements? (Brand preference, color, specific feature...)"
 };
 
-// --- API Functions ---
-
-// FOR LOCAL/VERCEL: Uncomment the line below and ensure .env has VITE_GEMINI_API_KEY
-// const apiKey = import.meta.env.VITE_GEMINI_API_KEY || ""; 
-
-// FOR PREVIEW (Safe Fallback):
-const apiKey = "";
-
-async function fetchRecommendations(formData, apiKey) {
-  if (!apiKey) throw new Error("API Key Missing! Please configure it in Settings (Gear Icon) or check your Environment Variables.");
-
-  const currentDate = new Date().toLocaleDateString();
-  let productQuery = formData.subCategory?.name || formData.category?.name || "Device";
-
-  if (formData.category?.id === 'automobile') {
-    productQuery = `${formData.autoUsage} ${formData.autoWheels}-Wheeler ${formData.autoFuel} Vehicle`;
-  }
-
-  const categoryId = formData.category?.id;
-  let recencyInstruction = "Suggest top-rated, current models available now (released within last 1-2 years).";
-  if (categoryId === 'smartphone') {
-    recencyInstruction = "Strictly prioritize devices released in the last 6 months.";
-  }
-
-  const currencySymbol = formData.country.currency;
-  const isNoLimit = formData.maxBudget >= formData.country.maxLimit;
-  const budgetPrompt = isNoLimit
-    ? `Minimum ${currencySymbol}${formData.minBudget} (NO UPPER PRICE LIMIT - Suggest the best possible options regardless of cost)`
-    : `Between ${currencySymbol}${formData.minBudget} and ${currencySymbol}${formData.maxBudget}`;
-
-  const prompt = `
-    Role: Expert Shopping Assistant.
-    Current Date: ${currentDate}.
-    
-    Task: Suggest exactly 3 models of: "${productQuery}" for a user in ${formData.country.name}.
-    
-    User Constraints:
-    1. Product: ${productQuery} (STRICTLY ENFORCE THIS).
-    2. Budget Range: ${budgetPrompt} (STRICTLY ENFORCE).
-    3. Priorities: 1. ${formData.priority1}, 2. ${formData.priority2}, 3. ${formData.priority3}.
-    4. Preferences: ${formData.preferences || "None specified"}.
-    5. Internal Rule: ${recencyInstruction}
-    
-    CRITICAL LOGIC:
-    - If "NO UPPER PRICE LIMIT" is set, suggest the absolute best/flagship/luxury options.
-    - If the max budget is clearly too low for the product:
-      - Return an EMPTY "results" array.
-      - Set "errorType" to "budget_low".
-      - Generate a FUNNY, CHEEKY ROAST about the budget.
-    - If valid, return standard JSON.
-    
-    Output Format: JSON Object ONLY.
-    {
-      "results": [
-        {
-          "name": "Full Name",
-          "price": "Exact Price",
-          "releaseDate": "Date",
-          "matchScore": "90%",
-          "reason": "Why it fits...",
-          "specs": ["Spec 1", "Spec 2"],
-          "pros": ["Pro 1"],
-          "cons": ["Con 1"]
-        }
-      ],
-      "error": {
-        "type": "budget_low" | "no_match" | null,
-        "message": "Only required if results array is empty."
-      }
-    }
-  `;
-
-  try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { responseMimeType: "application/json" }
-        }),
-      }
-    );
-    if (!response.ok) throw new Error("API Request Failed. Check your API Key or Quota.");
-    const data = await response.json();
-    return JSON.parse(data.candidates[0].content.parts[0].text);
-  } catch (error) {
-    console.error("AI Error:", error);
-    throw error;
-  }
-}
-
-async function fetchDeepDive(productName, country, apiKey) {
-  if (!apiKey) return null;
-  const prompt = `Analyze the "${productName}" for a buyer in ${country}. Provide a concise, brutal, and honest analysis in JSON format. Output JSON: { "bestFeature": "...", "worstFlaw": "...", "perfectFor": "...", "verdict": "..." }`;
-  try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } }) });
-    const data = await response.json();
-    return JSON.parse(data.candidates[0].content.parts[0].text);
-  } catch (e) { return null; }
-}
-
-async function fetchChatResponse(query, contextProducts, countryData, apiKey) {
-  if (!apiKey) return "API Key Missing.";
-  const productContext = contextProducts.map(p => {
-    const safeName = encodeURIComponent(p.name);
-    const affiliateSuffix = countryData.affiliateTag ? `&tag=${countryData.affiliateTag}` : '';
-    const buyLink = `https://www.${countryData.market}/s?k=${safeName}${affiliateSuffix}`;
-    return `Product: ${p.name}\nPrice: ${p.price}\nDirect Buy Link: ${buyLink}`;
-  }).join("\n\n");
-
-  const prompt = `
-    You are a TechFinder Personal Shopping Consultant.
-    
-    Context:
-    ${productContext}
-    
-    User Question: "${query}"
-    
-    Task: 
-    1. Answer specifically about these products. Compare if asked.
-    2. Keep it brief (under 60 words).
-    3. CRITICAL: If user asks where to buy or shows purchase intent:
-       - Use this format: [BUTTON: Check Price on Amazon]({DirectBuyLink})
-       - **IMPORTANT**: Do NOT output the raw URL text (https://...) separately. Only use the [BUTTON...] format. 
-    4. Use *bold* for product names.
-  `;
-
-  try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
-    const data = await response.json();
-    return data.candidates[0].content.parts[0].text;
-  } catch (e) { return "Sorry, I couldn't process that question right now."; }
-}
-
-// --- Independent Components ---
+// --- Helper Components ---
 
 const BudgetSlider = ({ min, max, currency, onChange, limit }) => {
   const getPercent = (value) => Math.round(((value) / limit) * 100);
@@ -350,6 +132,21 @@ const BudgetSlider = ({ min, max, currency, onChange, limit }) => {
   );
 };
 
+const ScoreBar = ({ label, score }) => (
+  <div className="mb-3">
+    <div className="flex justify-between text-xs font-bold mb-1 text-gray-600 dark:text-gray-300 uppercase tracking-wide">
+      <span>{label}</span>
+      <span>{score}/10</span>
+    </div>
+    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden">
+      <div
+        className={`h-full rounded-full transition-all duration-1000 ${score >= 8 ? 'bg-green-500' : score >= 6 ? 'bg-yellow-500' : 'bg-red-500'}`}
+        style={{ width: `${score * 10}%` }}
+      />
+    </div>
+  </div>
+);
+
 const StepIndicator = ({ currentStep }) => (
   <div className="flex justify-center mb-8">
     <div className="flex items-center space-x-2">
@@ -363,87 +160,406 @@ const StepIndicator = ({ currentStep }) => (
   </div>
 );
 
-const Card = ({ selected, onClick, children, className = "" }) => (
-  <div onClick={onClick} className={`cursor-pointer p-6 rounded-xl border-2 transition-all duration-200 relative overflow-hidden ${selected ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md transform scale-[1.02]' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300 hover:shadow-sm'} ${className}`}>
-    {selected && <div className="absolute top-3 right-3 text-blue-600 dark:text-blue-400"><Check size={20} strokeWidth={3} /></div>}
-    {children}
-  </div>
-);
+const FeedbackForm = () => {
+  const [submitted, setSubmitted] = useState(false);
+  if (submitted) return (
+    <div className="bg-green-50 dark:bg-green-900/20 p-6 rounded-xl text-center border border-green-100 dark:border-green-800 animate-in fade-in">
+      <div className="inline-block p-3 bg-green-100 dark:bg-green-900/50 rounded-full text-green-600 dark:text-green-400 mb-3"><Check size={24} /></div>
+      <h3 className="text-lg font-bold text-gray-900 dark:text-white">Message Sent!</h3>
+      <p className="text-sm text-gray-600 dark:text-gray-300">Thanks for helping us improve.</p>
+    </div>
+  );
+  return (
+    <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
+      <div className="grid md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Name</label>
+          <input type="text" placeholder="Your Name" required className="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+        </div>
+        <div>
+          <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Phone Number</label>
+          <input type="tel" placeholder="+91..." required className="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+        </div>
+      </div>
+      <div>
+        <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Email</label>
+        <input type="email" placeholder="your@email.com" required className="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+      </div>
+      <div>
+        <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Feedback / Issue</label>
+        <textarea placeholder="How can we make TechFinder better for you?" rows={3} className="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-all" />
+      </div>
+      <button type="submit" className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition-colors flex items-center justify-center gap-2">
+        Send Feedback <Send size={18} />
+      </button>
+    </form>
+  );
+};
 
-const LandingPage = ({ onStart, onPrivacy }) => (
-  <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 pb-20">
-    <section className="text-center py-20 px-4">
-      <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-sm font-medium mb-6 animate-in fade-in zoom-in duration-500 delay-100 border border-blue-100 dark:border-blue-800"><Sparkles size={14} className="mr-2" /> AI-Powered Shopping V2.0</div>
-      <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 dark:from-blue-400 dark:via-indigo-400 dark:to-purple-400 bg-clip-text text-transparent pb-2">Smart Shopping, <br /> Simplified.</h1>
-      <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">Stop wasting hours watching reviews. Tell us your budget and priorities, and our AI will find the perfect match.</p>
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <button onClick={onStart} className="px-8 py-4 bg-blue-600 text-white text-lg font-bold rounded-full hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/30 hover:scale-105 transition-all flex items-center justify-center gap-2">Find My Product <ArrowRight size={20} /></button>
-        <button onClick={() => document.getElementById('features').scrollIntoView({ behavior: 'smooth' })} className="px-8 py-4 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-lg font-bold rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">How it works</button>
+// --- API Functions ---
+
+const getApiKey = () => {
+  try {
+    // @ts-ignore
+    if (typeof import.meta !== 'undefined' && import.meta.env) {
+      return import.meta.env.VITE_GEMINI_API_KEY || "";
+    }
+  } catch (e) { }
+  return localStorage.getItem('gemini_api_key') || "";
+};
+
+const apiKey = "";
+
+async function fetchRecommendations(formData, userKey) {
+  const activeKey = userKey || apiKey;
+  if (!activeKey) throw new Error("API Key Missing! Please add VITE_GEMINI_API_KEY to your environment variables or paste it in the code.");
+
+  const productQuery = formData.category?.id === 'automobile'
+    ? `${formData.autoUsage} ${formData.autoWheels}-Wheeler ${formData.autoFuel} Vehicle`
+    : (formData.subCategory?.name || formData.category?.name || "Device");
+
+  const recencyInstruction = formData.category?.id === 'smartphone'
+    ? "Strictly prioritize devices released in the last 6 months."
+    : "Suggest top-rated models available now (last 1-2 years).";
+
+  const budgetPrompt = formData.maxBudget >= formData.country.maxLimit
+    ? `Minimum ${formData.country.currency}${formData.minBudget} (NO UPPER LIMIT - Suggest Flagship/Luxury)`
+    : `Between ${formData.country.currency}${formData.minBudget} and ${formData.country.currency}${formData.maxBudget}`;
+
+  const prompt = `
+    Role: Expert Shopping Assistant.
+    Task: Suggest 3 models of: "${productQuery}" in ${formData.country.name}.
+    Constraints: 
+    1. Product: ${productQuery} (STRICT).
+    2. Budget: ${budgetPrompt} (STRICT).
+    3. Priorities: ${formData.priority1}, ${formData.priority2}, ${formData.priority3}.
+    4. Rule: ${recencyInstruction}
+    
+    Output JSON ONLY:
+    {
+      "results": [
+        {
+          "name": "Full Name",
+          "price": "Exact Price",
+          "releaseDate": "Month Year",
+          "matchScore": "90%",
+          "reason": "Why it fits...",
+          "specs": ["Spec1", "Spec2", "Spec3"],
+          "pros": ["Pro1", "Pro2"],
+          "cons": ["Con1"],
+          "scores": { "Performance": 9, "Battery": 8, "Value": 10 } 
+        }
+      ],
+      "error": { "type": "budget_low" | "no_match" | null, "message": "Funny roast if budget is too low." }
+    }
+    NOTE: "scores" object MUST have 3 keys relevant to the product (e.g. Performance, Battery, Value). Use 1-10 integers.
+  `;
+
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${activeKey}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error?.message || "API Request Failed");
+    return JSON.parse(data.candidates[0].content.parts[0].text);
+  } catch (error) { throw error; }
+}
+
+async function fetchDeepDive(productName, country, userKey) {
+  const activeKey = userKey || apiKey;
+  if (!activeKey) return null;
+  const prompt = `Analyze "${productName}" for a buyer in ${country}. Concise, brutal, honest. Output JSON: { "bestFeature": "...", "worstFlaw": "...", "perfectFor": "...", "verdict": "..." }`;
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${activeKey}`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } })
+    });
+    const data = await response.json();
+    return JSON.parse(data.candidates[0].content.parts[0].text);
+  } catch (e) { return null; }
+}
+
+async function fetchChatResponse(query, contextProducts, countryData, userKey) {
+  const activeKey = userKey || apiKey;
+  if (!activeKey) return "API Key Missing.";
+  const context = contextProducts.map(p => `Product: ${p.name}, Price: ${p.price}, Link: https://www.${countryData.market}/s?k=${encodeURIComponent(p.name)}`).join("\n");
+  const prompt = `TechFinder Consultant. Context: ${context}. Question: "${query}". Answer briefly (<60 words). If purchase intent, use: [BUTTON: Check Price on Amazon]({Link}). DO NOT show raw URL.`;
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${activeKey}`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    });
+    const data = await response.json();
+    return data.candidates[0].content.parts[0].text;
+  } catch (e) { return "Sorry, error processing request."; }
+}
+
+// --- Page Components ---
+
+const LandingPage = ({ onStart, onPrivacy, onContact }) => (
+  <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
+    {/* Hero */}
+    <section className="text-center pt-10 pb-20 px-4 min-h-[70vh] flex flex-col items-center relative overflow-hidden">
+      {/* Adjusted gradient: Lighter color (blue-50), positioned higher (-top-16), and behind the header */}
+      <div className="absolute -top-16 inset-x-0 h-[80vh] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-50 via-transparent to-transparent dark:from-blue-900/20 pointer-events-none"></div>
+      <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-sm font-bold mb-8 animate-in fade-in zoom-in duration-500 delay-100 border border-blue-100 dark:border-blue-800 shadow-sm relative z-10">
+        <Sparkles size={16} className="mr-2 text-yellow-500" /> AI-Powered Shopping Assistant
+      </div>
+      <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-gradient-to-br from-gray-900 via-blue-800 to-indigo-900 dark:from-white dark:via-blue-200 dark:to-indigo-300 bg-clip-text text-transparent leading-tight max-w-4xl relative z-10">
+        Stop Searching. <br /> Start Buying Smart.
+      </h1>
+      <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed relative z-10">
+        The only AI that combines real-time market data, unbiased reviews, and your personal preferences to find the perfect product in seconds.
+      </p>
+      <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-10">
+        <button onClick={onStart} className="px-8 py-4 bg-blue-600 text-white text-lg font-bold rounded-full hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/30 hover:scale-105 transition-all flex items-center justify-center gap-2">
+          Find My Product <ArrowRight size={20} />
+        </button>
+        <button onClick={() => document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' })} className="px-8 py-4 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-lg font-bold rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+          See How It Works
+        </button>
       </div>
     </section>
-    <section id="features" className="py-20 px-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[{ icon: MessageSquare, title: "Personal Consultant", desc: "Chat with AI to compare models." }, { icon: Layers, title: "Deep Dive Analysis", desc: "Get critical 'Buy or Skip' verdicts." }, { icon: Globe, title: "Global Support", desc: "Works for Amazon US, India, UK & more." }, { icon: BarChart3, title: "Live Pricing", desc: "Real-time links to check current deals." }].map((f, i) => (
-            <div key={i} className="flex flex-col items-center text-center p-6 border border-gray-200 dark:border-gray-800 rounded-xl hover:shadow-lg transition-all bg-white dark:bg-gray-800">
-              <f.icon className="w-8 h-8 text-gray-700 dark:text-gray-300 mb-4" /><h4 className="font-bold text-gray-900 dark:text-white">{f.title}</h4><p className="text-sm text-gray-500 dark:text-gray-400 mt-2">{f.desc}</p>
+
+    {/* How It Works - Fancy */}
+    <section id="how-it-works" className="py-24 px-4 bg-gray-50 dark:bg-gray-900/50 relative overflow-hidden">
+      <div className="max-w-6xl mx-auto relative z-10">
+        <div className="text-center mb-20">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">How TechFinder Works</h2>
+          <p className="text-gray-600 dark:text-gray-400">Your journey to the perfect product in 3 simple steps.</p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8 relative">
+          {/* Connecting Line */}
+          <div className="hidden md:block absolute top-12 left-1/6 right-1/6 h-1 bg-gradient-to-r from-blue-200 via-purple-200 to-blue-200 dark:from-gray-700 dark:to-gray-700 -z-10 rounded-full"></div>
+
+          {[
+            { icon: Globe, title: "1. Select Region", desc: "Choose your country to get accurate local pricing and availability." },
+            { icon: BrainCircuit, title: "2. Define Needs", desc: "Tell our AI your budget, priorities, and must-have features." },
+            { icon: Award, title: "3. Get Ranked Results", desc: "Instant, unbiased top 3 recommendations with deep analysis." }
+          ].map((step, i) => (
+            <div key={i} className="flex flex-col items-center text-center group">
+              <div className="w-24 h-24 bg-white dark:bg-gray-800 rounded-2xl border-2 border-blue-100 dark:border-gray-700 flex items-center justify-center shadow-lg mb-6 group-hover:-translate-y-2 transition-transform duration-300 relative">
+                <div className="absolute inset-0 bg-blue-50 dark:bg-blue-900/20 rounded-2xl rotate-6 group-hover:rotate-12 transition-transform -z-10"></div>
+                <step.icon size={40} className="text-blue-600 dark:text-blue-400" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{step.title}</h3>
+              <p className="text-gray-600 dark:text-gray-400 max-w-xs">{step.desc}</p>
             </div>
           ))}
         </div>
       </div>
     </section>
-    <footer className="text-center pt-20 pb-10 border-t border-gray-200 dark:border-gray-800"><p className="text-gray-500 dark:text-gray-400 mb-4">© 2024 TechFinder AI. All rights reserved.</p><button onClick={onPrivacy} className="text-sm text-blue-600 dark:text-blue-400 hover:underline">Privacy Policy</button></footer>
+
+    {/* Stats / Trusted By */}
+    <section className="py-20 px-4 bg-blue-600 dark:bg-blue-900 text-white">
+      <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-blue-500/50">
+        <div className="p-4">
+          <div className="text-4xl font-bold mb-2 flex justify-center items-center gap-2"><TrendingUp /> 98%</div>
+          <p className="text-blue-100">Match Accuracy</p>
+        </div>
+        <div className="p-4">
+          <div className="text-4xl font-bold mb-2">10k+</div>
+          <p className="text-blue-100">Products Analyzed</p>
+        </div>
+        <div className="p-4">
+          <div className="text-4xl font-bold mb-2">Instant</div>
+          <p className="text-blue-100">AI Recommendations</p>
+        </div>
+      </div>
+    </section>
+
+    {/* Why Choose Us */}
+    <section className="py-24 px-4">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">Why Choose Us</h2>
+        </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { icon: MessageSquare, title: "Personal Consultant", desc: "Chat with AI to compare models directly." },
+            { icon: Layers, title: "Deep Dive Analysis", desc: "Get critical 'Buy or Skip' verdicts." },
+            { icon: Globe, title: "Global Support", desc: "Works for Amazon US, India, UK & more." },
+            { icon: BarChart3, title: "Live Pricing", desc: "Real-time links to check current deals." }
+          ].map((f, i) => (
+            <div key={i} className="p-8 border border-gray-100 dark:border-gray-800 rounded-2xl hover:shadow-xl transition-all bg-white dark:bg-gray-800 group hover:-translate-y-1">
+              <f.icon className="w-10 h-10 text-gray-700 dark:text-gray-300 mb-6 group-hover:text-blue-600 transition-colors" />
+              <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{f.title}</h4>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* Feedback Section */}
+    <section className="py-24 px-4 bg-gray-50 dark:bg-gray-900/30">
+      <div className="max-w-2xl mx-auto text-center mb-12">
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Help Us Improve</h2>
+        <p className="text-gray-600 dark:text-gray-400">Your feedback shapes the future of TechFinder AI.</p>
+      </div>
+      <div className="max-w-xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700">
+        <FeedbackForm />
+      </div>
+    </section>
+
+    {/* Footer */}
+    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-12 px-6 m-4 rounded-3xl shadow-sm">
+      <div className="max-w-5xl mx-auto grid md:grid-cols-4 gap-8 mb-8">
+        <div className="col-span-2">
+          <div className="flex items-center gap-2 mb-4">
+            <Sparkles size={20} className="text-blue-500" fill="currentColor" />
+            <span className="text-lg font-bold text-gray-900 dark:text-white">TechFinder<span className="text-gray-400 font-light">AI</span></span>
+          </div>
+          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs">Your personal AI shopping assistant. Making tech buying simple, smart, and unbiased.</p>
+        </div>
+        <div>
+          <h4 className="font-bold text-gray-900 dark:text-white mb-4">Quick Links</h4>
+          <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+            <li><button onClick={onStart} className="hover:text-blue-600">Start Search</button></li>
+            <li><button onClick={onContact} className="hover:text-blue-600">Contact Us</button></li>
+            <li><button onClick={onPrivacy} className="hover:text-blue-600">Privacy Policy</button></li>
+          </ul>
+        </div>
+        <div>
+          <h4 className="font-bold text-gray-900 dark:text-white mb-4">Connect</h4>
+          <div className="flex gap-4">
+            <a href={CONTACT_INFO.linkedin} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-blue-600"><Linkedin size={20} /></a>
+            <a href={`mailto:${CONTACT_INFO.email}`} className="text-gray-400 hover:text-blue-600"><Mail size={20} /></a>
+          </div>
+        </div>
+      </div>
+      <div className="max-w-5xl mx-auto pt-8 border-t border-gray-100 dark:border-gray-800 text-center text-sm text-gray-400">
+        <p>© 2024 TechFinder AI. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+);
+
+const ContactPage = ({ onBack }) => (
+  <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto py-12 px-6">
+    <button onClick={onBack} className="mb-8 flex items-center text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">
+      <ArrowLeft size={18} className="mr-2" /> Back to Home
+    </button>
+
+    <div className="grid md:grid-cols-2 gap-12 items-start">
+      <div>
+        <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-6">Get in Touch</h1>
+        <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">Have a question, suggestion, or just want to say hi? We'd love to hear from you.</p>
+
+        <div className="space-y-6">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center text-green-600 shrink-0">
+              <Phone size={24} />
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white">WhatsApp / Phone</h3>
+              <p className="text-gray-600 dark:text-gray-400">{CONTACT_INFO.whatsapp}</p>
+              <p className="text-xs text-gray-400 mt-1">Available Mon-Fri, 9am - 6pm IST</p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-600 shrink-0">
+              <Linkedin size={24} />
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white">LinkedIn</h3>
+              <a href={CONTACT_INFO.linkedin} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline break-all">Connect on LinkedIn</a>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center text-purple-600 shrink-0">
+              <Mail size={24} />
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white">Email</h3>
+              <a href={`mailto:${CONTACT_INFO.email}`} className="text-gray-600 dark:text-gray-400 hover:text-blue-600">{CONTACT_INFO.email}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Raise a Concern</h3>
+        <FeedbackForm />
+      </div>
+    </div>
   </div>
 );
 
 const PrivacyPolicy = ({ onBack }) => (
   <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-3xl mx-auto py-12 px-6 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 my-8">
     <button onClick={onBack} className="mb-6 flex items-center text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"><ArrowLeft size={16} className="mr-2" /> Back to Home</button>
-    <div className="prose dark:prose-invert">
+    <div className="prose dark:prose-invert max-w-none">
       <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Privacy Policy</h1>
-      <p className="text-gray-600 dark:text-gray-300 mb-4">At TechFinder AI, we prioritize your privacy.</p>
-      <h3 className="text-xl font-bold mt-8 mb-2 text-gray-800 dark:text-gray-200">1. Data Collection</h3><p className="text-gray-600 dark:text-gray-300 mb-4">We do not store your personal search history, preferences, or chat logs on our servers. All processing is done in real-time using the Gemini API.</p>
-      <h3 className="text-xl font-bold mt-8 mb-2 text-gray-800 dark:text-gray-200">2. Affiliate Links</h3><p className="text-gray-600 dark:text-gray-300 mb-4">This website uses Amazon Affiliate links. We may earn a small commission at no extra cost to you.</p>
+      <p className="text-gray-600 dark:text-gray-300 mb-4">Effective Date: {new Date().getFullYear()}</p>
+
+      <h3 className="text-xl font-bold mt-8 mb-2 text-gray-800 dark:text-gray-200">1. Information We Collect</h3>
+      <p className="text-gray-600 dark:text-gray-300">
+        TechFinder AI is a privacy-first application. We do not store your personal search history, product preferences, or chat logs on our servers.
+        All data is processed in real-time using the Google Gemini API and is transient.
+      </p>
+      <p className="text-gray-600 dark:text-gray-300 mt-2">
+        If you choose to use our Feedback or Contact forms, we collect the <strong>Name, Email Address, and Phone Number</strong> you provide solely for the purpose of responding to your inquiry or improving our services. This data is not shared with third parties for marketing purposes.
+      </p>
+
+      <h3 className="text-xl font-bold mt-8 mb-2 text-gray-800 dark:text-gray-200">2. Affiliate Disclosure</h3>
+      <p className="text-gray-600 dark:text-gray-300">This website participates in the Amazon Services LLC Associates Program. When you click on "Check on Amazon" links, we may earn a small commission at no additional cost to you. This supports the maintenance of this free tool.</p>
+
+      <h3 className="text-xl font-bold mt-8 mb-2 text-gray-800 dark:text-gray-200">3. Third-Party Services</h3>
+      <p className="text-gray-600 dark:text-gray-300">We utilize Google's Gemini API for generating AI recommendations. Please refer to Google's Privacy Policy regarding their data handling practices.</p>
+
+      <h3 className="text-xl font-bold mt-8 mb-2 text-gray-800 dark:text-gray-200">4. Contact Us</h3>
+      <p className="text-gray-600 dark:text-gray-300">If you have any questions about this Privacy Policy, please contact us via the details provided on our Contact page.</p>
     </div>
   </div>
 );
-
-const FeedbackForm = () => {
-  const [submitted, setSubmitted] = useState(false);
-  if (submitted) return (<div className="mt-16 bg-green-50 dark:bg-green-900/20 p-8 rounded-2xl text-center border border-green-100 dark:border-green-900"><div className="inline-block p-3 bg-green-100 dark:bg-green-900/50 rounded-full text-green-600 dark:text-green-400 mb-4"><Check size={24} /></div><h3 className="text-xl font-bold text-gray-800 dark:text-white">Thank You!</h3></div>);
-  return (<div className="mt-16 bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700"><h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Help us improve</h3><form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}><input type="text" placeholder="Your Name" required className="p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg w-full dark:text-white" /><textarea placeholder="Suggestions?" rows={3} className="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg dark:text-white" /><button type="submit" className="px-6 py-2 bg-gray-900 dark:bg-blue-600 text-white rounded-lg">Send Feedback</button></form></div>);
-};
-
-const SettingsModal = ({ isOpen, onClose, currentKey, onSave }) => {
-  const [keyInput, setKeyInput] = useState(currentKey);
-  if (!isOpen) return null;
-  return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[70] p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-sm w-full p-6 animate-in fade-in zoom-in duration-200">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-bold text-gray-800 dark:text-white flex items-center gap-2"><Settings size={18} /> Settings</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"><X size={20} /></button>
-        </div>
-        <div className="mb-4">
-          <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-2">Google Gemini API Key</label>
-          <div className="relative">
-            <Key size={16} className="absolute left-3 top-3 text-gray-400" />
-            <input type="password" value={keyInput} onChange={(e) => setKeyInput(e.target.value)} placeholder="AIzaSy..." className="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white" />
-          </div>
-          <p className="text-xs text-gray-400 mt-2">Enter your API key here if environment variables are not working. It is stored locally in your browser.</p>
-        </div>
-        <button onClick={() => { onSave(keyInput); onClose(); }} className="w-full py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">Save Settings</button>
-      </div>
-    </div>
-  );
-};
 
 const DeepDiveModal = ({ product, isOpen, onClose, apiKey }) => {
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
   useEffect(() => { if (isOpen && product) { setLoading(true); setAnalysis(null); fetchDeepDive(product.name, "your region", apiKey).then(data => { setAnalysis(data); setLoading(false); }); } }, [isOpen, product, apiKey]);
   if (!isOpen) return null;
-  return (<div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4"><div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden p-6 relative"><button onClick={onClose} className="absolute top-4 right-4"><X size={20} /></button><h4 className="text-lg font-bold text-center mb-4 dark:text-white">{product.name}</h4>{loading ? <Loader2 className="animate-spin mx-auto text-blue-600" /> : analysis ? <div className="space-y-4 text-sm dark:text-gray-300"><p><strong>⭐ Best:</strong> {analysis.bestFeature}</p><p><strong>⚠️ Worst:</strong> {analysis.worstFlaw}</p><p><strong>👤 For:</strong> {analysis.perfectFor}</p><p className="font-bold text-center">Verdict: {analysis.verdict}</p></div> : <p className="text-center text-red-500">Failed.</p>}</div></div>);
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-[60] p-4">
+      <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-5 flex justify-between items-center text-white shrink-0">
+          <div className="flex items-center gap-2"><Sparkles size={18} className="text-yellow-400" /><h3 className="font-bold tracking-wide">AI DEEP DIVE</h3></div>
+          <button onClick={onClose} className="hover:bg-white/20 p-2 rounded-full transition-colors"><X size={20} /></button>
+        </div>
+        <div className="p-6 overflow-y-auto">
+          <h4 className="text-xl font-extrabold text-gray-900 dark:text-white mb-6 text-center leading-tight">{product.name}</h4>
+          {loading ? (
+            <div className="flex flex-col items-center py-12">
+              <Loader2 className="animate-spin text-blue-600 mb-4" size={40} />
+              <p className="text-sm text-gray-500 dark:text-gray-400 font-medium animate-pulse">Analyzing specs, reviews & hidden flaws...</p>
+            </div>
+          ) : analysis ? (
+            <div className="grid gap-4">
+              <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-100 dark:border-green-800/50">
+                <div className="flex items-center gap-2 text-green-700 dark:text-green-400 font-bold uppercase text-xs mb-2"><ThumbsUp size={14} /> The Good</div>
+                <p className="text-gray-800 dark:text-gray-200 text-sm leading-relaxed">{analysis.bestFeature}</p>
+              </div>
+              <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-100 dark:border-red-800/50">
+                <div className="flex items-center gap-2 text-red-700 dark:text-red-400 font-bold uppercase text-xs mb-2"><ThumbsDown size={14} /> The Bad</div>
+                <p className="text-gray-800 dark:text-gray-200 text-sm leading-relaxed">{analysis.worstFlaw}</p>
+              </div>
+              <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800/50">
+                <div className="flex items-center gap-2 text-blue-700 dark:text-blue-400 font-bold uppercase text-xs mb-2"><User size={14} /> Ideal User</div>
+                <p className="text-gray-800 dark:text-gray-200 text-sm leading-relaxed">{analysis.perfectFor}</p>
+              </div>
+              <div className="mt-4 p-4 bg-gray-900 dark:bg-white rounded-xl text-center shadow-lg">
+                <span className="text-xs text-gray-400 dark:text-gray-500 uppercase font-bold tracking-widest block mb-1">Final Verdict</span>
+                <span className="text-lg font-bold text-white dark:text-gray-900">{analysis.verdict}</span>
+              </div>
+            </div>
+          ) : <p className="text-center text-red-500">Analysis failed.</p>}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 // --- Main App Component ---
@@ -458,7 +574,6 @@ export default function App() {
   const [chatHistory, setChatHistory] = useState([]);
   const [chatLoading, setChatLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
   const [userApiKey, setUserApiKey] = useState("");
 
   // Load API Key
@@ -467,11 +582,6 @@ export default function App() {
     if (stored) setUserApiKey(stored);
     else setUserApiKey(getApiKey());
   }, []);
-
-  const handleSaveKey = (key) => {
-    localStorage.setItem('gemini_api_key', key);
-    setUserApiKey(key);
-  };
 
   useEffect(() => {
     if (isDarkMode) document.documentElement.classList.add('dark');
@@ -530,31 +640,17 @@ export default function App() {
     setFormData(prev => ({ country: null, category: null, subCategory: null, autoUsage: 'Private', autoWheels: '4', autoFuel: 'Petrol/Diesel', minBudget: 0, maxBudget: 1000, priority1: '', priority2: '', priority3: '', preferences: '' }));
   };
 
-  const getPriorities = () => {
-    if (formData.category?.id === 'automobile') return PRIORITIES.automobile;
-    if (formData.subCategory && PRIORITIES[formData.subCategory.id]) return PRIORITIES[formData.subCategory.id];
-    if (formData.category && PRIORITIES[formData.category.id]) return PRIORITIES[formData.category.id];
-    return [];
-  };
-
-  // --- Render Steps Functions ---
-
   const renderCountryStep = () => (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-2">Where are you shopping?</h2>
       <p className="text-center text-gray-500 dark:text-gray-400 mb-8">This helps us find local availability and pricing.</p>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
         {COUNTRIES.map((country) => (
-          <Card
-            key={country.code}
-            selected={formData.country?.code === country.code}
-            onClick={() => handleSelection('country', country)}
-            className="flex flex-col items-center justify-center min-h-[8rem]"
-          >
+          <div key={country.code} onClick={() => handleSelection('country', country)} className={`cursor-pointer p-6 rounded-xl border-2 transition-all duration-200 flex flex-col items-center justify-center min-h-[8rem] ${formData.country?.code === country.code ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300'}`}>
             <span className="text-4xl mb-2">{country.code === 'OT' ? <Globe /> : <span className={`fi fi-${country.code.toLowerCase()}`} />}</span>
             <span className="font-medium text-gray-700 dark:text-gray-200 text-center text-sm md:text-base">{country.name}</span>
             <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">Currency: {country.currency}</span>
-          </Card>
+          </div>
         ))}
       </div>
     </div>
@@ -562,237 +658,238 @@ export default function App() {
 
   const renderCategoryStep = () => {
     if (formData.category && formData.category.hasSub) {
-      const subs = SUB_CATEGORIES[formData.category.id] || [];
       return (
         <div className="animate-in fade-in slide-in-from-right duration-500">
-          <div className="flex items-center justify-center mb-2 gap-2 text-blue-600 dark:text-blue-400 cursor-pointer" onClick={() => setFormData(p => ({ ...p, category: null }))}>
-            <ArrowLeft size={16} /> <span className="text-sm font-medium hover:underline">Back to Categories</span>
-          </div>
+          <div className="flex items-center justify-center mb-2 gap-2 text-blue-600 dark:text-blue-400 cursor-pointer" onClick={() => setFormData(p => ({ ...p, category: null }))}><ArrowLeft size={16} /> <span className="text-sm font-medium hover:underline">Back to Categories</span></div>
           <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-2">Select Type</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {subs.map((sub) => (
-              <Card
-                key={sub.id}
-                selected={formData.subCategory?.id === sub.id}
-                onClick={() => handleSelection('subCategory', sub)}
-                className="flex flex-col items-center justify-center min-h-[10rem]"
-              >
-                <sub.icon size={48} className={`mb-4 ${formData.subCategory?.id === sub.id ? 'text-blue-600' : 'text-gray-400'}`} />
-                <span className="font-semibold text-lg text-center text-gray-700 dark:text-gray-200">{sub.name}</span>
-              </Card>
-            ))}
-          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">{SUB_CATEGORIES[formData.category.id].map((sub) => (<div key={sub.id} onClick={() => handleSelection('subCategory', sub)} className={`cursor-pointer p-6 rounded-xl border-2 transition-all duration-200 flex flex-col items-center justify-center min-h-[10rem] ${formData.subCategory?.id === sub.id ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300'}`}><sub.icon size={48} className="mb-4 text-blue-600 dark:text-blue-400" /><span className="font-semibold text-lg text-center text-gray-700 dark:text-gray-200">{sub.name}</span></div>))}</div>
         </div>
       );
     }
     return (
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
         <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-2">What are you looking for?</h2>
-        <p className="text-center text-gray-500 dark:text-gray-400 mb-8">Select the type of product you need.</p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {CATEGORIES.map((cat) => (
-            <Card
-              key={cat.id}
-              selected={formData.category?.id === cat.id}
-              onClick={() => handleSelection('category', cat)}
-              className="flex flex-col items-center justify-center min-h-[10rem]"
-            >
-              <cat.icon size={48} className={`mb-4 ${formData.category?.id === cat.id ? 'text-blue-600' : 'text-gray-400'}`} />
-              <span className="font-semibold text-lg text-center text-gray-700 dark:text-gray-200">{cat.name}</span>
-            </Card>
-          ))}
-        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">{CATEGORIES.map((cat) => (<div key={cat.id} onClick={() => handleSelection('category', cat)} className={`cursor-pointer p-6 rounded-xl border-2 transition-all duration-200 flex flex-col items-center justify-center min-h-[10rem] ${formData.category?.id === cat.id ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300'}`}><cat.icon size={48} className="mb-4 text-blue-600 dark:text-blue-400" /><span className="font-semibold text-lg text-center text-gray-700 dark:text-gray-200">{cat.name}</span></div>))}</div>
       </div>
     );
   };
 
   const renderDetailsForm = () => {
-    const priorityOptions = getPriorities();
-    const isAuto = formData.category?.id === 'automobile';
-    const displayCategoryName = isAuto ? 'Automobile' : (formData.subCategory?.name || formData.category?.name);
-
-    // Safety check for country before accessing icon
+    const priorityOptions = formData.category?.id === 'automobile' ? PRIORITIES.automobile : (formData.subCategory && PRIORITIES[formData.subCategory.id]) || PRIORITIES[formData.category.id];
     const CurrencyIcon = formData.country?.icon || DollarSign;
+    const prefPlaceholder = PREFERENCE_SUGGESTIONS[formData.category?.id] || PREFERENCE_SUGGESTIONS.default;
 
     return (
-      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-2xl mx-auto pb-6">
-        <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-2">Refine your preferences</h2>
-        <p className="text-center text-gray-500 dark:text-gray-400 mb-8">Tell us what matters most to you in a {displayCategoryName}.</p>
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-3xl mx-auto pb-12">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 mb-3">
+            Design Your Perfect Match
+          </h2>
+          <p className="text-gray-500 dark:text-gray-400">Tell us what matters, and we'll find the needle in the haystack.</p>
+        </div>
 
-        <div className="space-y-6 bg-white dark:bg-gray-800 p-4 md:p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-white/20 dark:border-gray-700 shadow-2xl rounded-3xl overflow-hidden p-8 ring-1 ring-gray-900/5">
 
-          {isAuto && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-xl border border-blue-100 dark:border-blue-900">
-              {['Usage', 'Wheels', 'Fuel'].map(label => (
-                <div key={label}>
-                  <label className="block text-xs font-bold text-blue-800 dark:text-blue-300 mb-1">{label} Type</label>
-                  <select className="w-full p-2 rounded border border-blue-200 dark:border-blue-800 dark:bg-gray-800 dark:text-white text-sm"
-                    onChange={e => setFormData({ ...formData, [`auto${label}`]: e.target.value })}>
-                    {label === 'Usage' && <><option>Private</option><option>Commercial</option></>}
-                    {label === 'Wheels' && <><option value="2">2 Wheeler</option><option value="3">3 Wheeler</option><option value="4">4 Wheeler</option></>}
-                    {label === 'Fuel' && <><option>Petrol/Diesel</option><option>Electric (EV)</option><option>CNG/Hybrid</option></>}
-                  </select>
+          {/* Automobile Specifics - The Fancy Pill/Grid Layout */}
+          {formData.category?.id === 'automobile' && (
+            <div className="mb-8 p-6 bg-blue-50/50 dark:bg-blue-900/10 rounded-2xl border border-blue-100 dark:border-blue-800/50">
+              <h3 className="text-sm font-bold text-blue-800 dark:text-blue-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <Car size={16} /> Vehicle Configuration
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2">Usage</label>
+                  <div className="flex flex-col gap-2">
+                    {['Private', 'Commercial'].map(opt => (
+                      <button
+                        key={opt}
+                        onClick={() => setFormData({ ...formData, autoUsage: opt })}
+                        className={`py-2 px-3 text-sm rounded-lg border transition-all ${formData.autoUsage === opt ? 'bg-blue-600 border-blue-600 text-white shadow-md' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-blue-300'}`}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              ))}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2">Wheels</label>
+                  <div className="flex flex-col gap-2">
+                    {[
+                      { label: '2 Wheeler', val: '2' },
+                      { label: '4 Wheeler', val: '4' }
+                    ].map(opt => (
+                      <button
+                        key={opt.val}
+                        onClick={() => setFormData({ ...formData, autoWheels: opt.val })}
+                        className={`py-2 px-3 text-sm rounded-lg border transition-all ${formData.autoWheels === opt.val ? 'bg-blue-600 border-blue-600 text-white shadow-md' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-blue-300'}`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2">Fuel</label>
+                  <div className="flex flex-col gap-2">
+                    {['Petrol/Diesel', 'Electric'].map(opt => (
+                      <button
+                        key={opt}
+                        onClick={() => setFormData({ ...formData, autoFuel: opt })}
+                        className={`py-2 px-3 text-sm rounded-lg border transition-all ${formData.autoFuel === opt ? 'bg-blue-600 border-blue-600 text-white shadow-md' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-blue-300'}`}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                <span className="flex items-center text-lg font-bold mr-2 text-blue-600 dark:text-blue-400">
-                  <CurrencyIcon size={20} />
-                </span>
-                <span className="flex items-center">Price Range</span>
-              </label>
-              <button type="button" onClick={() => setFormData(prev => ({ ...prev, minBudget: 0, maxBudget: prev.country.maxLimit }))} className="text-xs bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-700 dark:to-gray-600 text-white px-3 py-1.5 rounded-full hover:shadow-lg transition-all flex items-center gap-1.5 font-medium border border-gray-600">
-                <Sparkles size={12} className="text-yellow-300" /> No Budget Limit
+          {/* Budget Section */}
+          <div className="mb-8">
+            <div className="flex justify-between items-end mb-4">
+              <div>
+                <label className="flex items-center gap-2 text-lg font-bold text-gray-800 dark:text-white">
+                  <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600">
+                    <CurrencyIcon size={18} />
+                  </div>
+                  Budget Range
+                </label>
+              </div>
+              <button
+                onClick={() => setFormData({ ...formData, minBudget: 0, maxBudget: formData.country.maxLimit })}
+                className={`text-xs px-3 py-1.5 rounded-full font-medium transition-all flex items-center gap-1.5 ${formData.maxBudget >= formData.country.maxLimit
+                    ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-lg'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200'
+                  }`}
+              >
+                <Sparkles size={12} fill="currentColor" />
+                {formData.maxBudget >= formData.country.maxLimit ? 'Budget Unlocked' : 'Unlock No Limit'}
               </button>
             </div>
-            <div className="flex justify-between items-end mb-1">
-              <span className="text-xs text-gray-400 font-normal">
-                {formData.maxBudget >= formData.country.maxLimit ? (
-                  <span className="text-green-600 font-bold flex items-center"><Check size={12} className="mr-1" /> Unlocked: Maximum Performance</span>
-                ) : `Max Limit: ${formData.country.currency}${formData.country.maxLimit.toLocaleString()}`}
-              </span>
+
+            <div className="px-2">
+              <BudgetSlider
+                min={formData.minBudget}
+                max={formData.maxBudget}
+                limit={formData.country.maxLimit}
+                currency={formData.country.currency}
+                onChange={(min, max) => setFormData({ ...formData, minBudget: min, maxBudget: max })}
+              />
             </div>
-            <BudgetSlider min={formData.minBudget} max={formData.maxBudget} limit={formData.country.maxLimit} currency={formData.country.currency} onChange={(min, max) => setFormData(prev => ({ ...prev, minBudget: min, maxBudget: max }))} />
           </div>
 
-          <div className="h-px bg-gray-100 dark:bg-gray-700 my-4" />
+          <div className="h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent my-8" />
 
-          <div className="space-y-4">
-            {['1', '2', '3'].map((num, i) => (
-              (i === 0 || formData[`priority${i}`]) && (
-                <div key={num} className="animate-in fade-in slide-in-from-top-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center mb-1">
-                    {i === 0 && <Sparkles size={16} className="mr-1" />} {i === 0 ? 'Primary' : i === 1 ? 'Secondary' : 'Tertiary'} Priority
-                  </label>
-                  <select
-                    value={formData[`priority${num}`]}
-                    onChange={(e) => setFormData({ ...formData, [`priority${num}`]: e.target.value })}
-                    className="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none dark:text-white"
-                  >
-                    <option value="">Select Priority</option>
-                    {priorityOptions.filter(p => [1, 2, 3].filter(n => n !== parseInt(num)).every(n => formData[`priority${n}`] !== p)).map(p => <option key={p} value={p}>{p}</option>)}
-                  </select>
-                </div>
-              )
-            ))}
+          {/* Priorities Section */}
+          <div className="mb-8">
+            <label className="flex items-center gap-2 text-lg font-bold text-gray-800 dark:text-white mb-6">
+              <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600">
+                <Layers size={18} />
+              </div>
+              What matters most?
+            </label>
+
+            <div className="space-y-4">
+              {['1', '2', '3'].map((n, i) => {
+                const show = i === 0 || formData[`priority${i}`];
+                if (!show) return null;
+
+                return (
+                  <div key={n} className="group relative animate-in fade-in slide-in-from-left-4 duration-500">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xs font-bold text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600 z-10 group-hover:bg-purple-100 group-hover:text-purple-600 transition-colors">
+                      {n}
+                    </div>
+                    <select
+                      value={formData[`priority${n}`]}
+                      onChange={(e) => setFormData({ ...formData, [`priority${n}`]: e.target.value })}
+                      className="w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl appearance-none cursor-pointer focus:ring-2 focus:ring-purple-500 focus:bg-white dark:focus:bg-gray-800 transition-all font-medium text-gray-700 dark:text-gray-200 hover:border-purple-300"
+                    >
+                      <option value="">Select Priority {n}...</option>
+                      {priorityOptions.filter(p => [1, 2, 3].every(x => x === parseInt(n) || formData[`priority${x}`] !== p)).map(p => <option key={p} value={p}>{p}</option>)}
+                    </select>
+                    <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none rotate-90" size={16} />
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
-          <div className="h-px bg-gray-100 dark:bg-gray-700 my-4" />
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Specific Preferences? (Optional)</label>
-            <textarea value={formData.preferences} onChange={(e) => setFormData({ ...formData, preferences: e.target.value })} placeholder="Any specific requirements..." className="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none h-24 resize-none dark:text-white" />
+          {/* Preferences Textarea */}
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl opacity-0 group-hover:opacity-20 transition duration-500 blur"></div>
+            <div className="relative">
+              <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 ml-1">Any specific wishes?</label>
+              <textarea
+                value={formData.preferences}
+                onChange={(e) => setFormData({ ...formData, preferences: e.target.value })}
+                placeholder={prefPlaceholder}
+                className="w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl h-32 resize-none focus:ring-2 focus:ring-blue-500 focus:outline-none transition-shadow text-gray-700 dark:text-white placeholder-gray-400"
+              />
+              <Sparkles className="absolute right-4 bottom-4 text-gray-300 dark:text-gray-600 group-hover:text-yellow-400 transition-colors" size={20} />
+            </div>
           </div>
+
         </div>
       </div>
     );
   };
 
   const renderResults = () => {
-    if (loading) {
-      return (
-        <div className="flex flex-col items-center justify-center py-20 animate-pulse">
-          <Loader2 className="w-16 h-16 text-blue-600 animate-spin mb-6" />
-          <h3 className="text-xl font-semibold text-gray-800 dark:text-white">Analyzing Market Data...</h3>
-          <p className="text-gray-500 dark:text-gray-400 mt-2">Finding the best matches within {formData.country.currency}{formData.minBudget} - {formData.country.currency}{formData.maxBudget}</p>
-        </div>
-      );
-    }
-    if (error) {
-      return (
-        <div className="text-center py-20 px-4">
-          <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4"><AlertCircle size={32} /></div>
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">System Error</h3>
-          <p className="text-gray-600 dark:text-gray-300 mb-6 bg-red-50 dark:bg-red-900/10 p-4 rounded-lg border border-red-100 dark:border-red-900 font-mono text-sm max-w-lg mx-auto">{error}</p>
-          <button onClick={handleFormSubmit} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Try Again</button>
-        </div>
-      );
-    }
-    if (recommendations && (!recommendations.results || recommendations.results.length === 0)) {
-      const isBudgetIssue = recommendations.error?.type === 'budget_low';
-      return (
-        <div className="text-center py-16 px-4 animate-in fade-in zoom-in duration-500">
-          <div className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 ${isBudgetIssue ? 'bg-yellow-100 text-yellow-600' : 'bg-gray-100 text-gray-600'}`}>
-            {isBudgetIssue ? <span className="text-4xl">💸</span> : <Search size={40} />}
-          </div>
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">{isBudgetIssue ? "Reality Check!" : "No Matches Found"}</h3>
-          <div className="max-w-md mx-auto bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 mb-8">
-            <p className="text-lg text-gray-700 dark:text-gray-300 italic font-medium">"{recommendations.error?.message || "We couldn't find any devices matching your specific criteria."}"</p>
-          </div>
-          <div className="flex justify-center gap-4">
-            <button onClick={() => setStep(3)} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200">Adjust Budget & Preferences</button>
-            <button onClick={resetApp} className="px-6 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">Start Over</button>
-          </div>
-        </div>
-      );
-    }
-
-    const displayCategoryName = formData.category?.id === 'automobile' ? 'Automobile' : (formData.subCategory?.name || formData.category?.name);
+    if (loading) return <div className="flex flex-col items-center py-20"><Loader2 className="w-16 h-16 text-blue-600 animate-spin mb-4" /><p className="text-gray-500 dark:text-gray-400">Finding the best matches...</p></div>;
+    if (error) return <div className="text-center py-20 px-4"><AlertCircle size={40} className="mx-auto text-red-500 mb-4" /><p className="text-red-500 mb-6">{error}</p><button onClick={handleFormSubmit} className="px-6 py-2 bg-blue-600 text-white rounded-lg">Try Again</button></div>;
+    if (!recommendations?.results?.length) return <div className="text-center py-20"><p className="text-xl font-bold dark:text-white">No matches found.</p><button onClick={() => setStep(3)} className="mt-4 text-blue-600">Adjust Filters</button></div>;
 
     return (
       <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 pb-32">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Your Perfect Matches</h2>
-          <p className="text-gray-600 dark:text-gray-400">Based on your preferences for {displayCategoryName} in {formData.country?.name}</p>
-        </div>
+        <div className="text-center mb-10"><h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Top Recommendations</h2></div>
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           {recommendations.results.map((item, idx) => (
-            <div key={idx} className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col transform hover:-translate-y-1 transition-transform duration-300">
+            <div key={idx} className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col">
               <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-4 text-white relative">
-                <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-2 py-1 rounded text-xs font-semibold border border-white/30">{item.matchScore} Match</div>
-                <h3 className="text-lg font-bold leading-tight pr-12">{item.name}</h3>
-                <div className="flex justify-between items-end mt-2"><span className="text-xl font-bold text-blue-100">{item.price}</span><span className="text-xs bg-black/20 px-2 py-1 rounded opacity-80">{item.releaseDate}</span></div>
+                <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-2 py-1 rounded text-xs font-bold">{item.matchScore} Match</div>
+                <h3 className="text-lg font-bold pr-12 leading-tight">{item.name}</h3>
+                <div className="flex justify-between items-end mt-2"><span className="text-xl font-bold">{item.price}</span><span className="text-xs opacity-80">{item.releaseDate}</span></div>
               </div>
               <div className="p-5 flex-1 flex flex-col">
-                <div className="mb-4"><p className="text-sm text-gray-600 dark:text-gray-300 italic border-l-4 border-blue-500 pl-3 py-1 bg-gray-50 dark:bg-gray-700 rounded-r">"{item.reason}"</p></div>
-                <div className="mb-4"><h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Key Specs</h4><div className="flex flex-wrap gap-2">{item.specs.map((spec, i) => (<span key={i} className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded-md font-medium">{spec}</span>))}</div></div>
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div><h4 className="flex items-center text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-wider mb-2"><ThumbsUp size={12} className="mr-1" /> Pros</h4><ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1">{item.pros.map((p, i) => <li key={i}>• {p}</li>)}</ul></div>
-                  <div><h4 className="flex items-center text-xs font-bold text-red-500 dark:text-red-400 uppercase tracking-wider mb-2"><ThumbsDown size={12} className="mr-1" /> Cons</h4><ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1">{item.cons.map((c, i) => <li key={i}>• {c}</li>)}</ul></div>
-                </div>
+                <p className="text-sm italic text-gray-600 dark:text-gray-300 mb-4 border-l-4 border-blue-500 pl-3">"{item.reason}"</p>
+                {/* Score Bars */}
+                {item.scores && (
+                  <div className="mb-4 space-y-1 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                    {Object.entries(item.scores).map(([k, v]) => <ScoreBar key={k} label={k} score={v} />)}
+                  </div>
+                )}
+                <div className="mb-4 flex flex-wrap gap-2">{item.specs.slice(0, 4).map((s, i) => <span key={i} className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-xs rounded font-medium dark:text-gray-300">{s}</span>)}</div>
                 <div className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-700 space-y-2">
-                  <button onClick={() => setDeepDiveProduct(item)} className="flex items-center justify-center w-full py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors font-medium text-sm"><Bot size={16} className="mr-2" /> AI Deep Dive</button>
-                  <a href={`https://www.${formData.country.market}/s?k=${encodeURIComponent(item.name)}${formData.country.affiliateTag ? `&tag=${formData.country.affiliateTag}` : ''}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full py-3 bg-gray-900 dark:bg-blue-600 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-blue-700 transition-colors font-medium group">Check on Amazon <ShoppingCart size={16} className="ml-2 group-hover:translate-x-1 transition-transform" /></a>
+                  <button onClick={() => setDeepDiveProduct(item)} className="w-full py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-lg text-sm font-medium flex items-center justify-center gap-2 hover:bg-indigo-100 dark:hover:bg-indigo-900/50"><Bot size={16} /> AI Deep Dive</button>
+                  <a href={`https://www.${formData.country.market}/s?k=${encodeURIComponent(item.name)}${formData.country.affiliateTag ? `&tag=${formData.country.affiliateTag}` : ''}`} target="_blank" rel="noopener noreferrer" className="w-full py-3 bg-[#FFD814] hover:bg-[#F7CA00] text-black rounded-lg font-bold text-sm flex items-center justify-center gap-2 shadow-sm border border-[#FCD200]">Check on Amazon <ShoppingCart size={16} /></a>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
+        {/* Chat */}
         <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 text-white flex items-center justify-between">
-            <div className="flex items-center gap-2"><Bot className="w-5 h-5" /><span className="font-bold">TechFinder AI Personal Consultant</span></div>
-            <span className="text-xs bg-white/20 px-2 py-1 rounded">Ask about these results</span>
-          </div>
-          <div className="p-4 bg-gray-50 dark:bg-gray-900 min-h-[150px] max-h-[300px] overflow-y-auto space-y-4">
-            {chatHistory.length === 0 && <div className="text-center text-gray-400 py-8 text-sm"><p>Not sure which one to pick?</p><p>Ask me anything! e.g., "Which has the best battery?"</p></div>}
-            {chatHistory.map((msg, i) => (
-              <div key={i} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] p-3 rounded-lg text-sm ${msg.type === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-bl-none shadow-sm'}`}>
-                  {msg.type === 'ai' ? <div dangerouslySetInnerHTML={{
-                    __html: msg.text
-                      .replace(/\*(.*?)\*/g, '<b>$1</b>')
-                      // Refined Regex for Buttons: Uses non-greedy capture and ensures brackets match
-                      .replace(/\[BUTTON:\s*([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="inline-flex mt-2 bg-[#FFD814] text-black border border-[#FCD200] px-4 py-2 rounded-full font-medium hover:bg-[#F7CA00] transition-colors shadow-sm items-center gap-2 w-fit no-underline text-sm"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg> $1</a>')
-                      .replace(/\[(?!BUTTON:)(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300 font-semibold">$1</a>')
-                  }} /> : msg.text}
+          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 text-white flex items-center gap-2"><Bot size={20} /><span className="font-bold">AI Consultant</span></div>
+          <div className="p-4 h-64 overflow-y-auto bg-gray-50 dark:bg-gray-900 space-y-3">
+            {!chatHistory.length && <p className="text-center text-gray-400 text-sm mt-10">Ask me anything about these products!</p>}
+            {chatHistory.map((m, i) => (
+              <div key={i} className={`flex ${m.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[85%] p-3 rounded-lg text-sm ${m.type === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-gray-200 rounded-bl-none'}`}>
+                  {m.type === 'ai' ? <div dangerouslySetInnerHTML={{ __html: m.text.replace(/\*(.*?)\*/g, '<b>$1</b>').replace(/\[BUTTON:\s*([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" target="_blank" class="block mt-2 bg-[#FFD814] text-black px-4 py-2 rounded-full font-bold text-center no-underline text-xs hover:bg-[#F7CA00] border border-[#FCD200]">$1</a>').replace(/\[(?!BUTTON:)(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" class="text-blue-500 hover:underline">$1</a>') }} /> : m.text}
                 </div>
               </div>
             ))}
-            {chatLoading && <div className="flex justify-start"><div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-3 rounded-lg rounded-bl-none shadow-sm"><Loader2 className="w-4 h-4 animate-spin text-purple-600" /></div></div>}
+            {chatLoading && <Loader2 className="w-5 h-5 animate-spin text-purple-600" />}
           </div>
-          <form onSubmit={handleChatSubmit} className="p-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex gap-2">
-            <input type="text" value={chatQuery} onChange={(e) => setChatQuery(e.target.value)} placeholder="Ask a follow-up question..." className="flex-1 p-2 bg-gray-100 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm" />
-            <button type="submit" disabled={chatLoading} className="p-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300"><Send size={18} /></button>
+          <form onSubmit={handleChatSubmit} className="p-3 bg-white dark:bg-gray-800 border-t dark:border-gray-700 flex gap-2">
+            <input value={chatQuery} onChange={e => setChatQuery(e.target.value)} placeholder="Ask a follow-up..." className="flex-1 p-2 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white focus:outline-none" />
+            <button disabled={chatLoading} className="p-2 bg-purple-600 text-white rounded-lg"><Send size={18} /></button>
           </form>
         </div>
-        <div className="mt-12 text-center">
-          <button onClick={resetApp} className="flex items-center justify-center mx-auto text-gray-500 dark:text-gray-400 hover:text-blue-600 transition-colors"><RefreshCcw size={16} className="mr-2" /> Start New Search</button>
-        </div>
+        <div className="mt-8 text-center"><button onClick={resetApp} className="text-gray-500 hover:text-blue-600 flex items-center justify-center mx-auto gap-2"><RefreshCcw size={16} /> Start New Search</button></div>
       </div>
     );
   };
@@ -801,14 +898,11 @@ export default function App() {
     <div className={`min-h-screen font-sans transition-colors duration-300 ${isDarkMode ? 'bg-gray-950 text-gray-100' : 'bg-gradient-to-br from-gray-50 to-blue-50 text-slate-800'}`}>
       <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity" onClick={resetApp}>
+          <div className="flex items-center gap-2 cursor-pointer" onClick={resetApp}>
             <Sparkles size={24} className="text-blue-500" fill="currentColor" />
             <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">TechFinder<span className="text-gray-400 font-light">AI</span></h1>
           </div>
-          <div className="flex items-center gap-4">
-            <button onClick={() => setShowSettings(true)} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors"><Settings size={20} /></button>
-            <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors">{isDarkMode ? <Sun size={20} /> : <Moon size={20} />}</button>
-          </div>
+          <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors">{isDarkMode ? <Sun size={20} /> : <Moon size={20} />}</button>
         </div>
       </header>
 
@@ -816,7 +910,8 @@ export default function App() {
         {step > 0 && <StepIndicator currentStep={step} />}
         <div className="min-h-[500px]">
           {step === 'privacy' && <PrivacyPolicy onBack={() => setStep(0)} />}
-          {step === 0 && <LandingPage onStart={() => setStep(1)} onPrivacy={() => setStep('privacy')} />}
+          {step === 'contact' && <ContactPage onBack={() => setStep(0)} />}
+          {step === 0 && <LandingPage onStart={() => setStep(1)} onPrivacy={() => setStep('privacy')} onContact={() => setStep('contact')} />}
           {step === 1 && renderCountryStep()}
           {step === 2 && renderCategoryStep()}
           {step === 3 && renderDetailsForm()}
@@ -824,7 +919,6 @@ export default function App() {
         </div>
       </main>
 
-      <SettingsModal isOpen={showSettings} onClose={() => setShowSettings(false)} currentKey={userApiKey} onSave={handleSaveKey} />
       <DeepDiveModal product={deepDiveProduct} isOpen={!!deepDiveProduct} onClose={() => setDeepDiveProduct(null)} apiKey={userApiKey} />
 
       {step > 0 && step < 4 && (

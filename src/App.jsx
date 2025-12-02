@@ -8,7 +8,7 @@ import {
   Armchair, Lock, Shirt, UtensilsCrossed, Send, Bot, X, Info, Shield,
   Moon, Sun, ArrowRight, BrainCircuit, BarChart3, Layers, Banknote,
   Euro, PoundSterling, JapaneseYen, IndianRupee, Mail, Phone, Linkedin,
-  MapPin, Star, Award, CheckCircle2, TrendingUp
+  MapPin, Star, Award, CheckCircle2, TrendingUp, HelpCircle
 } from 'lucide-react';
 
 /* --- API KEY SETUP ---
@@ -196,6 +196,40 @@ const FeedbackForm = () => {
   );
 };
 
+// --- Footer Component (Now Global) ---
+
+const Footer = ({ onStart, onPrivacy, onContact }) => (
+  <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-12 px-6 mt-auto">
+    <div className="max-w-5xl mx-auto grid md:grid-cols-4 gap-8 mb-8">
+      <div className="col-span-2">
+        <div className="flex items-center gap-2 mb-4">
+          <Sparkles size={20} className="text-blue-500" fill="currentColor" />
+          <span className="text-lg font-bold text-gray-900 dark:text-white">TechFinder<span className="text-gray-400 font-light">AI</span></span>
+        </div>
+        <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs">Your personal AI shopping assistant. Making tech buying simple, smart, and unbiased.</p>
+      </div>
+      <div>
+        <h4 className="font-bold text-gray-900 dark:text-white mb-4">Quick Links</h4>
+        <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+          <li><button onClick={onStart} className="hover:text-blue-600 transition-colors">Start Search</button></li>
+          <li><button onClick={onContact} className="hover:text-blue-600 transition-colors">Contact Us</button></li>
+          <li><button onClick={onPrivacy} className="hover:text-blue-600 transition-colors">Privacy Policy</button></li>
+        </ul>
+      </div>
+      <div>
+        <h4 className="font-bold text-gray-900 dark:text-white mb-4">Connect</h4>
+        <div className="flex gap-4">
+          <a href={CONTACT_INFO.linkedin} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-blue-600 transition-colors"><Linkedin size={20} /></a>
+          <a href={`mailto:${CONTACT_INFO.email}`} className="text-gray-400 hover:text-blue-600 transition-colors"><Mail size={20} /></a>
+        </div>
+      </div>
+    </div>
+    <div className="max-w-5xl mx-auto pt-8 border-t border-gray-100 dark:border-gray-800 text-center text-sm text-gray-400">
+      <p>© 2024 TechFinder AI. All rights reserved.</p>
+    </div>
+  </footer>
+);
+
 // --- API Functions ---
 
 const getApiKey = () => {
@@ -296,14 +330,14 @@ async function fetchChatResponse(query, contextProducts, countryData, userKey) {
 
 // --- Page Components ---
 
-const LandingPage = ({ onStart, onPrivacy, onContact }) => (
+const LandingPage = ({ onStart }) => (
   <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
     {/* Hero */}
     <section className="text-center pt-10 pb-20 px-4 min-h-[70vh] flex flex-col items-center relative overflow-hidden">
       {/* Adjusted gradient: Lighter color (blue-50), positioned higher (-top-16), and behind the header */}
       <div className="absolute -top-16 inset-x-0 h-[80vh] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-50 via-transparent to-transparent dark:from-blue-900/20 pointer-events-none"></div>
       <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-sm font-bold mb-8 animate-in fade-in zoom-in duration-500 delay-100 border border-blue-100 dark:border-blue-800 shadow-sm relative z-10">
-        <Sparkles size={16} className="mr-2 text-yellow-500" /> AI-Powered Shopping Assistant
+        <Sparkles size={16} className="mr-2 text-yellow-500" /> TechFinderAi V3
       </div>
       <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-gradient-to-br from-gray-900 via-blue-800 to-indigo-900 dark:from-white dark:via-blue-200 dark:to-indigo-300 bg-clip-text text-transparent leading-tight max-w-4xl relative z-10">
         Stop Searching. <br /> Start Buying Smart.
@@ -402,118 +436,6 @@ const LandingPage = ({ onStart, onPrivacy, onContact }) => (
         <FeedbackForm />
       </div>
     </section>
-
-    {/* Footer */}
-    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-12 px-6 m-4 rounded-3xl shadow-sm">
-      <div className="max-w-5xl mx-auto grid md:grid-cols-4 gap-8 mb-8">
-        <div className="col-span-2">
-          <div className="flex items-center gap-2 mb-4">
-            <Sparkles size={20} className="text-blue-500" fill="currentColor" />
-            <span className="text-lg font-bold text-gray-900 dark:text-white">TechFinder<span className="text-gray-400 font-light">AI</span></span>
-          </div>
-          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs">Your personal AI shopping assistant. Making tech buying simple, smart, and unbiased.</p>
-        </div>
-        <div>
-          <h4 className="font-bold text-gray-900 dark:text-white mb-4">Quick Links</h4>
-          <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-            <li><button onClick={onStart} className="hover:text-blue-600">Start Search</button></li>
-            <li><button onClick={onContact} className="hover:text-blue-600">Contact Us</button></li>
-            <li><button onClick={onPrivacy} className="hover:text-blue-600">Privacy Policy</button></li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="font-bold text-gray-900 dark:text-white mb-4">Connect</h4>
-          <div className="flex gap-4">
-            <a href={CONTACT_INFO.linkedin} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-blue-600"><Linkedin size={20} /></a>
-            <a href={`mailto:${CONTACT_INFO.email}`} className="text-gray-400 hover:text-blue-600"><Mail size={20} /></a>
-          </div>
-        </div>
-      </div>
-      <div className="max-w-5xl mx-auto pt-8 border-t border-gray-100 dark:border-gray-800 text-center text-sm text-gray-400">
-        <p>© 2024 TechFinder AI. All rights reserved.</p>
-      </div>
-    </footer>
-  </div>
-);
-
-const ContactPage = ({ onBack }) => (
-  <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto py-12 px-6">
-    <button onClick={onBack} className="mb-8 flex items-center text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">
-      <ArrowLeft size={18} className="mr-2" /> Back to Home
-    </button>
-
-    <div className="grid md:grid-cols-2 gap-12 items-start">
-      <div>
-        <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-6">Get in Touch</h1>
-        <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">Have a question, suggestion, or just want to say hi? We'd love to hear from you.</p>
-
-        <div className="space-y-6">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center text-green-600 shrink-0">
-              <Phone size={24} />
-            </div>
-            <div>
-              <h3 className="font-bold text-gray-900 dark:text-white">WhatsApp / Phone</h3>
-              <p className="text-gray-600 dark:text-gray-400">{CONTACT_INFO.whatsapp}</p>
-              <p className="text-xs text-gray-400 mt-1">Available Mon-Fri, 9am - 6pm IST</p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-600 shrink-0">
-              <Linkedin size={24} />
-            </div>
-            <div>
-              <h3 className="font-bold text-gray-900 dark:text-white">LinkedIn</h3>
-              <a href={CONTACT_INFO.linkedin} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline break-all">Connect on LinkedIn</a>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center text-purple-600 shrink-0">
-              <Mail size={24} />
-            </div>
-            <div>
-              <h3 className="font-bold text-gray-900 dark:text-white">Email</h3>
-              <a href={`mailto:${CONTACT_INFO.email}`} className="text-gray-600 dark:text-gray-400 hover:text-blue-600">{CONTACT_INFO.email}</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Raise a Concern</h3>
-        <FeedbackForm />
-      </div>
-    </div>
-  </div>
-);
-
-const PrivacyPolicy = ({ onBack }) => (
-  <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-3xl mx-auto py-12 px-6 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 my-8">
-    <button onClick={onBack} className="mb-6 flex items-center text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"><ArrowLeft size={16} className="mr-2" /> Back to Home</button>
-    <div className="prose dark:prose-invert max-w-none">
-      <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Privacy Policy</h1>
-      <p className="text-gray-600 dark:text-gray-300 mb-4">Effective Date: {new Date().getFullYear()}</p>
-
-      <h3 className="text-xl font-bold mt-8 mb-2 text-gray-800 dark:text-gray-200">1. Information We Collect</h3>
-      <p className="text-gray-600 dark:text-gray-300">
-        TechFinder AI is a privacy-first application. We do not store your personal search history, product preferences, or chat logs on our servers.
-        All data is processed in real-time using the Google Gemini API and is transient.
-      </p>
-      <p className="text-gray-600 dark:text-gray-300 mt-2">
-        If you choose to use our Feedback or Contact forms, we collect the <strong>Name, Email Address, and Phone Number</strong> you provide solely for the purpose of responding to your inquiry or improving our services. This data is not shared with third parties for marketing purposes.
-      </p>
-
-      <h3 className="text-xl font-bold mt-8 mb-2 text-gray-800 dark:text-gray-200">2. Affiliate Disclosure</h3>
-      <p className="text-gray-600 dark:text-gray-300">This website participates in the Amazon Services LLC Associates Program. When you click on "Check on Amazon" links, we may earn a small commission at no additional cost to you. This supports the maintenance of this free tool.</p>
-
-      <h3 className="text-xl font-bold mt-8 mb-2 text-gray-800 dark:text-gray-200">3. Third-Party Services</h3>
-      <p className="text-gray-600 dark:text-gray-300">We utilize Google's Gemini API for generating AI recommendations. Please refer to Google's Privacy Policy regarding their data handling practices.</p>
-
-      <h3 className="text-xl font-bold mt-8 mb-2 text-gray-800 dark:text-gray-200">4. Contact Us</h3>
-      <p className="text-gray-600 dark:text-gray-300">If you have any questions about this Privacy Policy, please contact us via the details provided on our Contact page.</p>
-    </div>
   </div>
 );
 
@@ -526,7 +448,7 @@ const DeepDiveModal = ({ product, isOpen, onClose, apiKey }) => {
     <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-[60] p-4">
       <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden flex flex-col max-h-[90vh]">
         <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-5 flex justify-between items-center text-white shrink-0">
-          <div className="flex items-center gap-2"><Sparkles size={18} className="text-yellow-400" /><h3 className="font-bold tracking-wide">AI DEEP DIVE</h3></div>
+          <div className="flex items-center gap-2"><Sparkles size={18} className="text-yellow-400" /><h3 className="font-bold tracking-wide">Deep Dive by TechFinder AI</h3></div>
           <button onClick={onClose} className="hover:bg-white/20 p-2 rounded-full transition-colors"><X size={20} /></button>
         </div>
         <div className="p-6 overflow-y-auto">
@@ -627,12 +549,19 @@ export default function App() {
     } finally { setLoading(false); }
   };
 
-  const handleChatSubmit = async (e) => {
-    e.preventDefault();
-    if (!chatQuery.trim()) return;
-    const userQ = chatQuery; setChatQuery(""); setChatHistory(prev => [...prev, { type: 'user', text: userQ }]); setChatLoading(true);
+  const handleChatSubmit = async (e, overrideQuery) => {
+    e?.preventDefault();
+    const queryToUse = overrideQuery || chatQuery;
+    if (!queryToUse.trim()) return;
+
+    const userQ = queryToUse;
+    setChatQuery("");
+    setChatHistory(prev => [...prev, { type: 'user', text: userQ }]);
+    setChatLoading(true);
+
     const response = await fetchChatResponse(userQ, recommendations.results, formData.country, userApiKey);
-    setChatHistory(prev => [...prev, { type: 'ai', text: response }]); setChatLoading(false);
+    setChatHistory(prev => [...prev, { type: 'ai', text: response }]);
+    setChatLoading(false);
   };
 
   const resetApp = () => {
@@ -872,9 +801,18 @@ export default function App() {
 
         {/* Chat */}
         <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 text-white flex items-center gap-2"><Bot size={20} /><span className="font-bold">AI Consultant</span></div>
+          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 text-white flex items-center gap-2"><Bot size={20} /><span className="font-bold">TechFinder AI Personal Consultant</span></div>
           <div className="p-4 h-64 overflow-y-auto bg-gray-50 dark:bg-gray-900 space-y-3">
-            {!chatHistory.length && <p className="text-center text-gray-400 text-sm mt-10">Ask me anything about these products!</p>}
+            {!chatHistory.length && (
+              <div className="text-center text-gray-400 text-sm mt-10">
+                <p className="mb-2">Ask me anything about these products!</p>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {["Which has better battery?", "Is it worth the price?", "Compare cameras"].map(q => (
+                    <button key={q} onClick={(e) => handleChatSubmit(e, q)} className="bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full text-xs hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">{q}</button>
+                  ))}
+                </div>
+              </div>
+            )}
             {chatHistory.map((m, i) => (
               <div key={i} className={`flex ${m.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] p-3 rounded-lg text-sm ${m.type === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-gray-200 rounded-bl-none'}`}>
@@ -920,6 +858,9 @@ export default function App() {
       </main>
 
       <DeepDiveModal product={deepDiveProduct} isOpen={!!deepDiveProduct} onClose={() => setDeepDiveProduct(null)} apiKey={userApiKey} />
+
+      {/* Global Footer for all pages */}
+      <Footer onStart={() => setStep(1)} onPrivacy={() => setStep('privacy')} onContact={() => setStep('contact')} />
 
       {step > 0 && step < 4 && (
         <div className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-t border-gray-200 dark:border-gray-800 p-4 shadow-lg z-40">

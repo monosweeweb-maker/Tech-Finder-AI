@@ -51,7 +51,8 @@ import {
   ArrowRight,
   BrainCircuit,
   BarChart3,
-  Layers
+  Layers,
+  Banknote
 } from 'lucide-react';
 
 /* IMPORTANT FOR VERCEL DEPLOYMENT:
@@ -231,11 +232,9 @@ const BudgetSlider = ({ min, max, currency, onChange, limit }) => {
 };
 
 // --- API Logic ---
-const apiKey = "AIzaSyAxsuhPseAipZ1Ld8jMdv7dz1vSblIsd1c"; // <--- PASTE YOUR GOOGLE GEMINI API KEY HERE BEFORE DEPLOYING TO VERCEL
+const apiKey = ""; // Set to empty string for environment execution. 
 
 async function fetchRecommendations(formData) {
-  if (!apiKey) throw new Error("API Key Missing! Please add your Gemini API Key in the code (Line ~205).");
-
   const currentDate = new Date().toLocaleDateString();
   let productQuery = formData.subCategory?.name || formData.category?.name || "Device";
 
@@ -320,7 +319,6 @@ async function fetchRecommendations(formData) {
 }
 
 async function fetchDeepDive(productName, country) {
-  if (!apiKey) return null;
   const prompt = `
     Analyze the "${productName}" for a buyer in ${country}.
     Provide a concise, brutal, and honest analysis in JSON format.
@@ -341,7 +339,6 @@ async function fetchDeepDive(productName, country) {
 }
 
 async function fetchChatResponse(query, contextProducts, countryData) {
-  if (!apiKey) return "API Key Missing.";
   const productContext = contextProducts.map(p => {
     const safeName = encodeURIComponent(p.name);
     const affiliateSuffix = countryData.affiliateTag ? `&tag=${countryData.affiliateTag}` : '';

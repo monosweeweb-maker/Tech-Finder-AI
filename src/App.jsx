@@ -52,31 +52,39 @@ import {
   BrainCircuit,
   BarChart3,
   Layers,
-  Banknote
+  Banknote,
+  Euro,
+  PoundSterling,
+  JapaneseYen,
+  IndianRupee
 } from 'lucide-react';
 
 /* IMPORTANT FOR VERCEL DEPLOYMENT:
-  To make Dark Mode work, your tailwind.config.js MUST have:
-  
-  export default {
-    darkMode: 'class', // <--- Add this line
-    content: [ ... ],
-    theme: { ... },
-    plugins: [],
-  }
+  1. To make Dark Mode work, your tailwind.config.js MUST have:
+     export default {
+       darkMode: 'class', 
+       content: [ ... ],
+       theme: { ... },
+       plugins: [],
+     }
+
+  2. API KEY SETUP:
+     - Create a .env file in your root directory.
+     - Add: VITE_GEMINI_API_KEY=your_actual_api_key_here
+     - Uncomment the 'import.meta.env' line in the code below (Line ~240).
 */
 
 // --- Constants & Config ---
 
 const COUNTRIES = [
-  { code: 'US', name: 'United States', currency: '$', market: 'amazon.com', affiliateTag: 'YOUR_US_TAG', maxLimit: 5000 },
-  { code: 'IN', name: 'India', currency: '₹', market: 'amazon.in', affiliateTag: 'monoswee-21', maxLimit: 500000 },
-  { code: 'UK', name: 'United Kingdom', currency: '£', market: 'amazon.co.uk', affiliateTag: 'YOUR_UK_TAG-21', maxLimit: 4000 },
-  { code: 'CA', name: 'Canada', currency: 'C$', market: 'amazon.ca', affiliateTag: 'YOUR_CA_TAG-20', maxLimit: 6000 },
-  { code: 'AU', name: 'Australia', currency: 'A$', market: 'amazon.com.au', affiliateTag: 'YOUR_AU_TAG-22', maxLimit: 7000 },
-  { code: 'DE', name: 'Germany', currency: '€', market: 'amazon.de', affiliateTag: 'YOUR_DE_TAG-21', maxLimit: 5000 },
-  { code: 'JP', name: 'Japan', currency: '¥', market: 'amazon.co.jp', affiliateTag: 'YOUR_JP_TAG-22', maxLimit: 600000 },
-  { code: 'OT', name: 'Other (Global)', currency: '$', market: 'google.com', affiliateTag: '', maxLimit: 5000 }
+  { code: 'US', name: 'United States', currency: '$', icon: DollarSign, market: 'amazon.com', affiliateTag: 'YOUR_US_TAG', maxLimit: 5000 },
+  { code: 'IN', name: 'India', currency: '₹', icon: IndianRupee, market: 'amazon.in', affiliateTag: 'monoswee-21', maxLimit: 500000 },
+  { code: 'UK', name: 'United Kingdom', currency: '£', icon: PoundSterling, market: 'amazon.co.uk', affiliateTag: 'YOUR_UK_TAG-21', maxLimit: 4000 },
+  { code: 'CA', name: 'Canada', currency: 'C$', icon: DollarSign, market: 'amazon.ca', affiliateTag: 'YOUR_CA_TAG-20', maxLimit: 6000 },
+  { code: 'AU', name: 'Australia', currency: 'A$', icon: DollarSign, market: 'amazon.com.au', affiliateTag: 'YOUR_AU_TAG-22', maxLimit: 7000 },
+  { code: 'DE', name: 'Germany', currency: '€', icon: Euro, market: 'amazon.de', affiliateTag: 'YOUR_DE_TAG-21', maxLimit: 5000 },
+  { code: 'JP', name: 'Japan', currency: '¥', icon: JapaneseYen, market: 'amazon.co.jp', affiliateTag: 'YOUR_JP_TAG-22', maxLimit: 600000 },
+  { code: 'OT', name: 'Other (Global)', currency: '$', icon: Banknote, market: 'google.com', affiliateTag: '', maxLimit: 5000 }
 ];
 
 const CATEGORIES = [
@@ -232,9 +240,19 @@ const BudgetSlider = ({ min, max, currency, onChange, limit }) => {
 };
 
 // --- API Logic ---
-const apiKey = ""; // Set to empty string for environment execution. 
+
+// FOR LOCAL/VERCEL: Uncomment the line below and ensure .env has VITE_GEMINI_API_KEY
+// const apiKey = import.meta.env.VITE_GEMINI_API_KEY || ""; 
+
+// FOR PREVIEW (Safe Fallback):
+const apiKey = "";
 
 async function fetchRecommendations(formData) {
+  // If API key is missing (likely on local/Vercel without setup), throw clear error
+  if (!apiKey) {
+    throw new Error("API Key Missing! Please add VITE_GEMINI_API_KEY to your .env file (Local) or Environment Variables (Vercel).");
+  }
+
   const currentDate = new Date().toLocaleDateString();
   let productQuery = formData.subCategory?.name || formData.category?.name || "Device";
 
@@ -313,12 +331,12 @@ async function fetchRecommendations(formData) {
     return JSON.parse(data.candidates[0].content.parts[0].text);
   } catch (error) {
     console.error("AI Error:", error);
-    // Pass the actual error message up
     throw error;
   }
 }
 
 async function fetchDeepDive(productName, country) {
+  if (!apiKey) return null;
   const prompt = `
     Analyze the "${productName}" for a buyer in ${country}.
     Provide a concise, brutal, and honest analysis in JSON format.
@@ -339,6 +357,7 @@ async function fetchDeepDive(productName, country) {
 }
 
 async function fetchChatResponse(query, contextProducts, countryData) {
+  if (!apiKey) return "API Key Missing.";
   const productContext = contextProducts.map(p => {
     const safeName = encodeURIComponent(p.name);
     const affiliateSuffix = countryData.affiliateTag ? `&tag=${countryData.affiliateTag}` : '';
@@ -800,6 +819,8 @@ export default function App() {
     const priorityOptions = getPriorities();
     const isAuto = formData.category?.id === 'automobile';
     const displayCategoryName = isAuto ? 'Automobile' : (formData.subCategory?.name || formData.category?.name);
+    // Currency Icon Logic
+    const CurrencyIcon = formData.country.icon || DollarSign;
 
     return (
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-2xl mx-auto pb-6">
@@ -827,7 +848,10 @@ export default function App() {
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                <span className="flex items-center text-lg font-bold mr-2 text-blue-600 dark:text-blue-400">{formData.country.currency}</span> <span className="flex items-center">Price Range</span>
+                <span className="flex items-center text-lg font-bold mr-2 text-blue-600 dark:text-blue-400">
+                  <CurrencyIcon size={20} />
+                </span>
+                <span className="flex items-center">Price Range</span>
               </label>
               <button type="button" onClick={() => setFormData(prev => ({ ...prev, minBudget: 0, maxBudget: prev.country.maxLimit }))} className="text-xs bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-700 dark:to-gray-600 text-white px-3 py-1.5 rounded-full hover:shadow-lg transition-all flex items-center gap-1.5 font-medium border border-gray-600">
                 <Sparkles size={12} className="text-yellow-300" /> No Budget Limit

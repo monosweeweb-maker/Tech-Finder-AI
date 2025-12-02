@@ -107,24 +107,74 @@ const BudgetSlider = ({ min, max, currency, onChange, limit }) => {
   return (
     <div className="w-full px-2 py-4">
       <div className="relative w-full h-12">
+        {/* Track Background */}
         <div className="absolute top-1/2 left-0 w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full -translate-y-1/2"></div>
-        <div className="absolute top-1/2 h-2 bg-blue-600 rounded-full -translate-y-1/2 pointer-events-none z-10" style={{ left: `${minPercent}%`, width: `${maxPercent - minPercent}%` }}></div>
-        <input type="range" min={0} max={limit} value={min} onChange={(e) => { const value = Math.min(Number(e.target.value), max - (limit * 0.05)); onChange(value, max); }} className="absolute top-1/2 left-0 w-full -translate-y-1/2 appearance-none bg-transparent pointer-events-auto z-20 cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-600 [&::-webkit-slider-thumb]:shadow-md hover:[&::-webkit-slider-thumb]:scale-110 transition-all" />
-        <input type="range" min={0} max={limit} value={max} onChange={(e) => { const value = Math.max(Number(e.target.value), min + (limit * 0.05)); onChange(min, value); }} className="absolute top-1/2 left-0 w-full -translate-y-1/2 appearance-none bg-transparent pointer-events-auto z-20 cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-600 [&::-webkit-slider-thumb]:shadow-md hover:[&::-webkit-slider-thumb]:scale-110 transition-all" />
+
+        {/* Active Track Range */}
+        <div
+          className="absolute top-1/2 h-2 bg-blue-600 rounded-full -translate-y-1/2 pointer-events-none z-10"
+          style={{ left: `${minPercent}%`, width: `${maxPercent - minPercent}%` }}
+        ></div>
+
+        {/* Min Slider 
+          FIX: Added pointer-events-none to input but pointer-events-auto to thumb
+        */}
+        <input
+          type="range"
+          min={0}
+          max={limit}
+          value={min}
+          onChange={(e) => {
+            const value = Math.min(Number(e.target.value), max - (limit * 0.05));
+            onChange(value, max);
+          }}
+          className="absolute top-1/2 left-0 w-full -translate-y-1/2 appearance-none bg-transparent pointer-events-none z-20 cursor-pointer 
+            [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-600 [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:appearance-none hover:[&::-webkit-slider-thumb]:scale-110 transition-all
+            [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-blue-600 [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:appearance-none hover:[&::-moz-range-thumb]:scale-110
+          "
+        />
+
+        {/* Max Slider 
+          FIX: Added pointer-events-none to input but pointer-events-auto to thumb
+        */}
+        <input
+          type="range"
+          min={0}
+          max={limit}
+          value={max}
+          onChange={(e) => {
+            const value = Math.max(Number(e.target.value), min + (limit * 0.05));
+            onChange(min, value);
+          }}
+          className="absolute top-1/2 left-0 w-full -translate-y-1/2 appearance-none bg-transparent pointer-events-none z-20 cursor-pointer 
+            [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-600 [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:appearance-none hover:[&::-webkit-slider-thumb]:scale-110 transition-all
+            [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-blue-600 [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:appearance-none hover:[&::-moz-range-thumb]:scale-110
+          "
+        />
       </div>
       <div className="flex justify-between items-center gap-4 mt-2">
         <div className="flex-1">
           <label className="text-xs text-gray-500 dark:text-gray-400 font-bold ml-1">Min Price</label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">{currency}</span>
-            <input type="number" value={min} onChange={(e) => onChange(Number(e.target.value), max)} className="w-full pl-8 pr-3 py-2 border border-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none" />
+            <input
+              type="number"
+              value={min}
+              onChange={(e) => onChange(Number(e.target.value), max)}
+              className="w-full pl-8 pr-3 py-2 border border-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none"
+            />
           </div>
         </div>
         <div className="flex-1">
           <label className="text-xs text-gray-500 dark:text-gray-400 font-bold ml-1">Max Price</label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">{currency}</span>
-            <input type="number" value={max} onChange={(e) => onChange(min, Number(e.target.value))} className="w-full pl-8 pr-3 py-2 border border-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none" />
+            <input
+              type="number"
+              value={max}
+              onChange={(e) => onChange(min, Number(e.target.value))}
+              className="w-full pl-8 pr-3 py-2 border border-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none"
+            />
           </div>
         </div>
       </div>
@@ -317,8 +367,30 @@ async function fetchDeepDive(productName, country, userKey) {
 async function fetchChatResponse(query, contextProducts, countryData, userKey) {
   const activeKey = userKey || apiKey;
   if (!activeKey) return "API Key Missing.";
-  const context = contextProducts.map(p => `Product: ${p.name}, Price: ${p.price}, Link: https://www.${countryData.market}/s?k=${encodeURIComponent(p.name)}`).join("\n");
-  const prompt = `TechFinder Consultant. Context: ${context}. Question: "${query}". Answer briefly (<60 words). If purchase intent, use: [BUTTON: Check Price on Amazon]({Link}). DO NOT show raw URL.`;
+  const context = contextProducts.map(p => {
+    // Fix: Encode name but replace parens to avoid markdown regex breaking
+    const safeName = encodeURIComponent(p.name).replace(/\(/g, '%28').replace(/\)/g, '%29');
+    const affiliateSuffix = countryData.affiliateTag ? `&tag=${countryData.affiliateTag}` : '';
+    const buyLink = `https://www.${countryData.market}/s?k=${safeName}${affiliateSuffix}`;
+    return `Product: ${p.name}\nPrice: ${p.price}\nDirect Buy Link: ${buyLink}`;
+  }).join("\n\n");
+
+  const prompt = `
+    You are a TechFinder Personal Shopping Consultant.
+    
+    Context:
+    ${context}
+    
+    User Question: "${query}"
+    
+    Task: 
+    1. Answer specifically about these products. Compare if asked.
+    2. Keep it brief (under 60 words).
+    3. CRITICAL: If user asks where to buy or shows purchase intent:
+       - Use this EXACT format: [BUTTON: Check Price on Amazon]({DirectBuyLink})
+       - **IMPORTANT**: Do NOT output the raw URL text (https://...) separately. Only use the [BUTTON...] format. 
+    4. Use *bold* for product names.
+  `;
   try {
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${activeKey}`, {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
@@ -330,7 +402,7 @@ async function fetchChatResponse(query, contextProducts, countryData, userKey) {
 
 // --- Page Components ---
 
-const LandingPage = ({ onStart }) => (
+const LandingPage = ({ onStart, onPrivacy, onContact }) => (
   <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
     {/* Hero */}
     <section className="text-center pt-10 pb-20 px-4 min-h-[70vh] flex flex-col items-center relative overflow-hidden">
@@ -791,7 +863,7 @@ export default function App() {
                 )}
                 <div className="mb-4 flex flex-wrap gap-2">{item.specs.slice(0, 4).map((s, i) => <span key={i} className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-xs rounded font-medium dark:text-gray-300">{s}</span>)}</div>
                 <div className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-700 space-y-2">
-                  <button onClick={() => setDeepDiveProduct(item)} className="w-full py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-lg text-sm font-medium flex items-center justify-center gap-2 hover:bg-indigo-100 dark:hover:bg-indigo-900/50"><Bot size={16} /> AI Deep Dive</button>
+                  <button onClick={() => setDeepDiveProduct(item)} className="w-full py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-lg text-sm font-medium flex items-center justify-center gap-2 hover:bg-indigo-100 dark:hover:bg-indigo-900/50"><Bot size={16} /> Deep Dive by TechFinder AI</button>
                   <a href={`https://www.${formData.country.market}/s?k=${encodeURIComponent(item.name)}${formData.country.affiliateTag ? `&tag=${formData.country.affiliateTag}` : ''}`} target="_blank" rel="noopener noreferrer" className="w-full py-3 bg-[#FFD814] hover:bg-[#F7CA00] text-black rounded-lg font-bold text-sm flex items-center justify-center gap-2 shadow-sm border border-[#FCD200]">Check on Amazon <ShoppingCart size={16} /></a>
                 </div>
               </div>

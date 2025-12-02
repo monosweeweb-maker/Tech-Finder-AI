@@ -231,7 +231,7 @@ const BudgetSlider = ({ min, max, currency, onChange, limit }) => {
 };
 
 // --- API Logic ---
-const apiKey = ""; // <--- PASTE YOUR GOOGLE GEMINI API KEY HERE BEFORE DEPLOYING TO VERCEL
+const apiKey = "AIzaSyAxsuhPseAipZ1Ld8jMdv7dz1vSblIsd1c"; // <--- PASTE YOUR GOOGLE GEMINI API KEY HERE BEFORE DEPLOYING TO VERCEL
 
 async function fetchRecommendations(formData) {
   if (!apiKey) throw new Error("API Key Missing! Please add your Gemini API Key in the code (Line ~205).");

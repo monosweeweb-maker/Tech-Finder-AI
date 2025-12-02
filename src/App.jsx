@@ -220,7 +220,7 @@ const BudgetSlider = ({ min, max, currency, onChange, limit }) => {
 };
 
 // --- API Logic ---
-const apiKey = ""; // Environment will provide this
+const apiKey = "AIzaSyAxsuhPseAipZ1Ld8jMdv7dz1vSblIsd1c"; // Environment will provide this
 
 async function fetchRecommendations(formData) {
   const currentDate = new Date().toLocaleDateString();

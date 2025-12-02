@@ -54,6 +54,17 @@ import {
   Layers
 } from 'lucide-react';
 
+/* IMPORTANT FOR VERCEL DEPLOYMENT:
+  To make Dark Mode work, your tailwind.config.js MUST have:
+  
+  export default {
+    darkMode: 'class', // <--- Add this line
+    content: [ ... ],
+    theme: { ... },
+    plugins: [],
+  }
+*/
+
 // --- Constants & Config ---
 
 const COUNTRIES = [
@@ -220,9 +231,11 @@ const BudgetSlider = ({ min, max, currency, onChange, limit }) => {
 };
 
 // --- API Logic ---
-const apiKey = "AIzaSyAxsuhPseAipZ1Ld8jMdv7dz1vSblIsd1c"; // Environment will provide this
+const apiKey = ""; // <--- PASTE YOUR GOOGLE GEMINI API KEY HERE BEFORE DEPLOYING TO VERCEL
 
 async function fetchRecommendations(formData) {
+  if (!apiKey) throw new Error("API Key Missing! Please add your Gemini API Key in the code (Line ~205).");
+
   const currentDate = new Date().toLocaleDateString();
   let productQuery = formData.subCategory?.name || formData.category?.name || "Device";
 
@@ -296,16 +309,18 @@ async function fetchRecommendations(formData) {
         }),
       }
     );
-    if (!response.ok) throw new Error("API Request Failed");
+    if (!response.ok) throw new Error("API Request Failed. Check your API Key or Quota.");
     const data = await response.json();
     return JSON.parse(data.candidates[0].content.parts[0].text);
   } catch (error) {
     console.error("AI Error:", error);
+    // Pass the actual error message up
     throw error;
   }
 }
 
 async function fetchDeepDive(productName, country) {
+  if (!apiKey) return null;
   const prompt = `
     Analyze the "${productName}" for a buyer in ${country}.
     Provide a concise, brutal, and honest analysis in JSON format.
@@ -326,6 +341,7 @@ async function fetchDeepDive(productName, country) {
 }
 
 async function fetchChatResponse(query, contextProducts, countryData) {
+  if (!apiKey) return "API Key Missing.";
   const productContext = contextProducts.map(p => {
     const safeName = encodeURIComponent(p.name);
     const affiliateSuffix = countryData.affiliateTag ? `&tag=${countryData.affiliateTag}` : '';
@@ -681,7 +697,8 @@ export default function App() {
       const results = await fetchRecommendations(formData);
       setRecommendations(results);
     } catch (err) {
-      setError("Failed to generate recommendations. Please try again.");
+      // Set the specific error message to display to the user
+      setError(err.message || "Failed to generate recommendations. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -813,7 +830,7 @@ export default function App() {
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                <span className="flex items-center"><DollarSign size={16} className="mr-1" /> Price Range</span>
+                <span className="flex items-center text-lg font-bold mr-2 text-blue-600 dark:text-blue-400">{formData.country.currency}</span> <span className="flex items-center">Price Range</span>
               </label>
               <button type="button" onClick={() => setFormData(prev => ({ ...prev, minBudget: 0, maxBudget: prev.country.maxLimit }))} className="text-xs bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-700 dark:to-gray-600 text-white px-3 py-1.5 rounded-full hover:shadow-lg transition-all flex items-center gap-1.5 font-medium border border-gray-600">
                 <Sparkles size={12} className="text-yellow-300" /> No Budget Limit
@@ -874,10 +891,10 @@ export default function App() {
     }
     if (error) {
       return (
-        <div className="text-center py-20">
+        <div className="text-center py-20 px-4">
           <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4"><AlertCircle size={32} /></div>
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">System Error</h3>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">{error}</p>
+          <p className="text-gray-600 dark:text-gray-300 mb-6 bg-red-50 dark:bg-red-900/10 p-4 rounded-lg border border-red-100 dark:border-red-900 font-mono text-sm max-w-lg mx-auto">{error}</p>
           <button onClick={handleFormSubmit} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Try Again</button>
         </div>
       );
